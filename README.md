@@ -17,5 +17,3 @@ npm run build
 1. Create a new repo, push this project.
 2. In GitHub: **Settings → Pages** — set **Source: GitHub Actions**.
 3. The included workflow will build and publish to the `gh-pages` branch on every push to `main`.
-
-If you prefer manual deploy, you can also host the `dist/` folder on any static host.

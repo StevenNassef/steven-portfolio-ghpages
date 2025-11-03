@@ -11,12 +11,8 @@ export default {
         border: '#1f2937',
         primary: '#60a5fa'
       },
-      boxShadow: {
-        card: '0 10px 20px rgba(0,0,0,0.25)'
-      },
-      borderRadius: {
-        xl2: '1.25rem'
-      }
+      boxShadow: { card: '0 10px 20px rgba(0,0,0,0.25)' },
+      borderRadius: { xl2: '1.25rem' }
     },
   },
   plugins: [],

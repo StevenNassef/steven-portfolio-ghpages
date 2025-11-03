@@ -2,7 +2,6 @@ import React from 'react'
 import { Github, Linkedin, Mail, Download, Gamepad2, Wrench, Cpu, Rocket } from 'lucide-react'
 
 const Badge = ({children}) => <span className='badge'>{children}</span>
-
 const Card = ({children}) => <div className='card'>{children}</div>
 const CardHeader = ({children}) => <div className='card-header'>{children}</div>
 const CardTitle = ({children}) => <div className='card-title'>{children}</div>
@@ -84,7 +83,7 @@ export default function App(){
               <div className='text-sm text-muted'>2019–2023</div>
             </CardHeader>
             <CardContent>
-              <p className='text-sm'><b>Zarzura</b> (word trivia), <b>Rocket Factory</b>, <b>Coin Forge</b>, <b>Rent Lord</b> — full lifecycle: design, implementation, launch, and updates.</p>
+              <p className='text-sm'><b>Zarzura</b> (word‑trivia), <b>Rocket Factory</b>, <b>Coin Forge</b>, <b>Rent Lord</b> — full lifecycle: design, implementation, launch, and updates.</p>
             </CardContent>
           </Card>
         </div>
@@ -106,9 +105,9 @@ export default function App(){
             title='Performance & Reliability'
             role='Senior Unity Engineer'
             bullets={[
-              'Profiled UI and content pipelines; eliminated GC spikes via object pooling and async loading (UniTask‑style patterns).',
+              'Profiled UI and content pipelines; eliminated GC spikes via object pooling and async loading (Async/Await patterns).',
               'Addressed crash/ANR sources by tightening lifecycle handling, null‑safety, and platform‑specific guards.',
-              'Authored CI‑friendly debug toggles and logs to accelerate QA reproduction and root‑cause analysis.',
+              'CI‑friendly debug toggles and logs to accelerate QA reproduction and root‑cause analysis.',
             ]}
             stack={['Profiler','Addressables','Async/Await','CI logs','Crash triage']}
           />
