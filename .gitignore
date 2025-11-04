@@ -1,0 +1,46 @@
+# --- Node / Package Managers ---
+node_modules/
+logs/
+*.log
+*.log.*
+npm-cache/
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Keep your lockfile for reproducible builds:
+# (Do NOT ignore package-lock.json / yarn.lock / pnpm-lock.yaml)
+
+# --- Build / Caches ---
+dist/
+.vite/
+.cache/
+.eslintcache
+.stylelintcache
+coverage/
+*.tsbuildinfo
+
+# --- Env / Secrets ---
+.env
+.env.local
+.env.*.local
+
+# --- Editors / IDEs ---
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# --- OS junk ---
+.DS_Store
+.DS_Store?
+Thumbs.db
+ehthumbs.db
+Icon?
+._*
+
+# --- Misc ---
+# If you export temporary artifacts locally, ignore them here:
+# *.tmp
+# *.bak

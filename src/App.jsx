@@ -1,5 +1,7 @@
 import React from 'react'
 import { Github, Linkedin, Mail, Download, Gamepad2, Wrench, Cpu, Rocket } from 'lucide-react'
+import { projects } from './projectsData.js'
+import MediaCarousel from "./components/MediaCarousel.jsx";
 
 const Badge = ({children}) => <span className='badge'>{children}</span>
 const Card = ({children}) => <div className='card'>{children}</div>
@@ -15,23 +17,6 @@ const Section = ({id, title, subtitle, children}) => (
     </div>
     {children}
   </section>
-)
-
-const Project = ({ title, role, period, bullets, stack }) => (
-  <Card>
-    <CardHeader>
-      <CardTitle><Gamepad2 className='h-5 w-5'/> {title}</CardTitle>
-      <div className='text-sm text-muted'>{role}{period ? ` — ${period}` : ''}</div>
-    </CardHeader>
-    <CardContent>
-      <ul className='list-disc pl-5 space-y-1 text-sm'>
-        {bullets.map((b,i)=>(<li key={i}>{b}</li>))}
-      </ul>
-      <div className='flex flex-wrap gap-2 pt-3'>
-        {stack.map((s,i)=>(<Badge key={i}>{s}</Badge>))}
-      </div>
-    </CardContent>
-  </Card>
 )
 
 export default function App(){
@@ -90,50 +75,57 @@ export default function App(){
       </Section>
 
       <Section id='case-study' title='Case Study — Mergedom: Home Design' subtitle='Selected contributions from a large‑scale, ad/IAP‑driven mobile title.'>
-        <div className='grid md:grid-cols-2 gap-4'>
-          <Project
-            title='Live‑Ops & Monetization'
-            role='Senior Unity Engineer'
-            bullets={[
-              'Implemented feature‑flagged events (e.g., Throwback Treasure, Chocolate Box) enabling A/B testing & safe rollouts.',
-              'Integrated and updated growth/analytics SDKs (Firebase, Adjust, AppsFlyer) and built editor tooling for config toggles.',
-              'Improved IAP flows and event tracking; reduced edge‑case failures via defensive code and validation tooling.',
-            ]}
-            stack={['Unity','C#','UGS/Remote Config','Firebase','Adjust','AppsFlyer']}
-          />
-          <Project
-            title='Performance & Reliability'
-            role='Senior Unity Engineer'
-            bullets={[
-              'Profiled UI and content pipelines; eliminated GC spikes via object pooling and async loading (Async/Await patterns).',
-              'Addressed crash/ANR sources by tightening lifecycle handling, null‑safety, and platform‑specific guards.',
-              'CI‑friendly debug toggles and logs to accelerate QA reproduction and root‑cause analysis.',
-            ]}
-            stack={['Profiler','Addressables','Async/Await','CI logs','Crash triage']}
-          />
+        <div className='grid md:grid-cols-2 gap-6'>
+          {projects.filter(p => p.key === 'mergdom').map(p => (
+            <Card key={p.key}>
+              <CardHeader>
+                <CardTitle>{p.title}</CardTitle>
+                <div className='text-sm text-muted'>Senior Unity Engineer</div>
+              </CardHeader>
+              <CardContent>
+                <div className='media ratio-16x9 mb-4'>
+                  <img src={p.image} alt={p.title + ' screenshot'} loading='lazy' />
+                </div>
+                <div className='media ratio-16x9 mb-4'>
+                  <img src={p.video} alt={p.title + ' demo video'} loading='lazy' />
+                </div>
+                <ul className='list-disc pl-5 space-y-1 text-sm'>
+                  {p.bullets.map((b,i)=>(<li key={i}>{b}</li>))}
+                </ul>
+                <div className='flex flex-wrap gap-2 pt-3'>
+                  {p.stack.map((s,i)=>(<Badge key={i}>{s}</Badge>))}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </Section>
 
       <Section id='projects' title='Selected Projects'>
-        <div className='grid md:grid-cols-3 gap-4'>
-          <Project
-            title='Zarzura'
-            role='Lead Developer'
-            bullets={['Word‑trivia mobile game with polished UX and scalable content tooling.','Implemented data‑driven levels and localization.']}
-            stack={['Unity','C#','Localization','Mobile UI']}
-          />
-          <Project
-            title='Rocket Factory'
-            role='Solo Developer'
-            bullets={['Physics‑driven assembly gameplay.','Deployed on iOS with optimized asset pipelines.']}
-            stack={['Unity','C#','iOS','Addressables']}
-          />
-          <Project
-            title='Coin Forge / Rent Lord'
-            role='Solo Developer'
-            bullets={['Simulation systems with incremental mechanics.','Responsible for store submission, analytics, and updates.']}
-            stack={['Unity','C#','Analytics','Store Ops']}
-          />
+        <div className='grid md:grid-cols-2 gap-6'>
+          {projects.filter(p => p.key !== 'mergdom').map(p => (
+            <Card key={p.key}>
+              <CardHeader>
+                <CardTitle>{p.title}</CardTitle>
+                <div className='text-sm text-muted'>{p.role}</div>
+              </CardHeader>
+                <CardContent>
+                    <MediaCarousel
+                        title={p.title}
+                        main={p.main}
+                        gallery={p.gallery}
+                        aspect="16 / 9"   // iPhone 13 Pro Max landscape
+                    />
+
+                    <ul className='list-disc pl-5 space-y-1 text-sm mt-4'>
+                        {p.bullets.map((b,i)=>(<li key={i}>{b}</li>))}
+                    </ul>
+                    <div className='flex flex-wrap gap-2 pt-3'>
+                        {p.stack.map((s,i)=>(<Badge key={i}>{s}</Badge>))}
+                    </div>
+                </CardContent>
+            </Card>
+          ))}
         </div>
       </Section>
 
