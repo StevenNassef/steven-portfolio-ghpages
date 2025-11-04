@@ -5,7 +5,7 @@ export const projects = [
         role: "Solo Developer",
         main: "/projects/jumpy_shooter/jumpy_shooter_main.jpeg",
         gallery: [
-            { type: "image", src: "/projects/jumpy_shooter/jumpy_shooter_1.jpeg" },
+            { type: "video", src: "/projects/jumpy_shooter/jumpy_shooter.mp4", poster: "/projects/jumpy_shooter/jumpy_shooter_1.jpeg" },
             { type: "image", src: "/projects/jumpy_shooter/jumpy_shooter_2.jpeg" },
             { type: "image", src: "/projects/jumpy_shooter/jumpy_shooter_3.jpeg" },
             { type: "image", src: "/projects/jumpy_shooter/jumpy_shooter_3.jpeg" },
@@ -24,7 +24,7 @@ export const projects = [
         role: "Solo Developer",
         main: "/projects/rent_lord/rent_lord_main.jpeg",
         gallery: [
-            { type: "image", src: "/projects/rent_lord/rent_lord_1.jpeg" },
+            { type: "video", src: "/projects/rent_lord/rent_lord.mp4", poster: "/projects/rent_lord/rent_lord_1.jpeg" },
             { type: "image", src: "/projects/rent_lord/rent_lord_2.jpeg" },
             { type: "image", src: "/projects/rent_lord/rent_lord_3.jpeg" },
             { type: "image", src: "/projects/rent_lord/rent_lord_4.jpeg" },
@@ -41,7 +41,7 @@ export const projects = [
         role: "Solo Developer",
         main: "/projects/rocket_factory/rocket_factory_main.jpeg",
         gallery: [
-            { type: "image", src: "/projects/rocket_factory/rocket_factory_1.jpeg" },
+            { type: "video", src: "/projects/rocket_factory/rocket_factory.mp4", poster: "/projects/coin_forge/rocket_factory_1.jpeg" },
             { type: "image", src: "/projects/rocket_factory/rocket_factory_2.jpeg" },
             { type: "image", src: "/projects/rocket_factory/rocket_factory_3.jpeg" },
         ],
@@ -57,8 +57,7 @@ export const projects = [
         role: "Solo Developer",
         main: "/projects/coin_forge/coin_forge_main.jpeg",
         gallery: [
-            { type: "video", src: "/projects/jumpy_shooter/coin_forge.mp4" },
-            { type: "image", src: "/projects/coin_forge/coin_forge_1.jpeg" },
+            { type: "video", src: "/projects/coin_forge/coin_forge.mp4", poster: "/projects/coin_forge/coin_forge_1.jpeg" },
             { type: "image", src: "/projects/coin_forge/coin_forge_2.jpeg" },
             { type: "image", src: "/projects/coin_forge/coin_forge_4.jpeg" },
         ],

@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Github, Linkedin, Mail, Download, Gamepad2, Wrench, Cpu, Rocket } from 'lucide-react'
 import { projects } from './projectsData.js'
 import MediaCarousel from "./components/MediaCarousel.jsx";
 
 const Badge = ({children}) => <span className='badge'>{children}</span>
-const Card = ({children}) => <div className='card'>{children}</div>
+const Card = ({children, className = '', ...props}) => <div className={`card ${className}`} {...props}>{children}</div>
 const CardHeader = ({children}) => <div className='card-header'>{children}</div>
 const CardTitle = ({children}) => <div className='card-title'>{children}</div>
 const CardContent = ({children}) => <div className='card-content'>{children}</div>
@@ -19,7 +19,14 @@ const Section = ({id, title, subtitle, children}) => (
   </section>
 )
 
-export default function App(){
+function parseRoute() {
+  const hash = window.location.hash || '';
+  const m = hash.match(/^#\/project\/([^\/]+)$/);
+  if (m) return { name: 'project', key: decodeURIComponent(m[1]) };
+  return { name: 'home' };
+}
+
+function Home({ onOpenProject }) {
   const year = new Date().getFullYear()
   return (
     <div>
@@ -77,19 +84,23 @@ export default function App(){
       <Section id='case-study' title='Case Study — Mergedom: Home Design' subtitle='Selected contributions from a large‑scale, ad/IAP‑driven mobile title.'>
         <div className='grid md:grid-cols-2 gap-6'>
           {projects.filter(p => p.key === 'mergdom').map(p => (
-            <Card key={p.key}>
+            <Card
+              key={p.key}
+              onClick={() => onOpenProject(p.key)}
+              className='cursor-pointer hover:ring-2 hover:ring-indigo-400/50 transition-shadow'
+            >
               <CardHeader>
                 <CardTitle>{p.title}</CardTitle>
                 <div className='text-sm text-muted'>Senior Unity Engineer</div>
               </CardHeader>
               <CardContent>
-                <div className='media ratio-16x9 mb-4'>
-                  <img src={p.image} alt={p.title + ' screenshot'} loading='lazy' />
-                </div>
-                <div className='media ratio-16x9 mb-4'>
-                  <img src={p.video} alt={p.title + ' demo video'} loading='lazy' />
-                </div>
-                <ul className='list-disc pl-5 space-y-1 text-sm'>
+                <MediaCarousel
+                  title={p.title}
+                  main={p.main}
+                  gallery={p.gallery}
+                  aspect="16 / 9"
+                />
+                <ul className='list-disc pl-5 space-y-1 text-sm mt-4'>
                   {p.bullets.map((b,i)=>(<li key={i}>{b}</li>))}
                 </ul>
                 <div className='flex flex-wrap gap-2 pt-3'>
@@ -104,26 +115,30 @@ export default function App(){
       <Section id='projects' title='Selected Projects'>
         <div className='grid md:grid-cols-2 gap-6'>
           {projects.filter(p => p.key !== 'mergdom').map(p => (
-            <Card key={p.key}>
+            <Card
+              key={p.key}
+              onClick={() => onOpenProject(p.key)}
+              className='cursor-pointer hover:ring-2 hover:ring-indigo-400/50 transition-shadow'
+            >
               <CardHeader>
                 <CardTitle>{p.title}</CardTitle>
                 <div className='text-sm text-muted'>{p.role}</div>
               </CardHeader>
-                <CardContent>
-                    <MediaCarousel
-                        title={p.title}
-                        main={p.main}
-                        gallery={p.gallery}
-                        aspect="16 / 9"   // iPhone 13 Pro Max landscape
-                    />
+              <CardContent>
+                <MediaCarousel
+                  title={p.title}
+                  main={p.main}
+                  gallery={p.gallery}
+                  aspect="16 / 9"   // iPhone 13 Pro Max landscape
+                />
 
-                    <ul className='list-disc pl-5 space-y-1 text-sm mt-4'>
-                        {p.bullets.map((b,i)=>(<li key={i}>{b}</li>))}
-                    </ul>
-                    <div className='flex flex-wrap gap-2 pt-3'>
-                        {p.stack.map((s,i)=>(<Badge key={i}>{s}</Badge>))}
-                    </div>
-                </CardContent>
+                <ul className='list-disc pl-5 space-y-1 text-sm mt-4'>
+                  {p.bullets.map((b,i)=>(<li key={i}>{b}</li>))}
+                </ul>
+                <div className='flex flex-wrap gap-2 pt-3'>
+                  {p.stack.map((s,i)=>(<Badge key={i}>{s}</Badge>))}
+                </div>
+              </CardContent>
             </Card>
           ))}
         </div>
@@ -158,4 +173,78 @@ export default function App(){
       <footer className='py-10 text-center text-xs text-muted'>© {year} Steven Nassef Henry — Built with React & Tailwind</footer>
     </div>
   )
+}
+
+function ProjectDetail({ projectKey, onBack }) {
+  const p = useMemo(() => projects.find(x => x.key === projectKey), [projectKey]);
+  if (!p) {
+    return (
+      <div className='container py-10'>
+        <button className='btn btn-outline mb-6 hover:ring-2 hover:ring-indigo-400/50 transition-shadow' onClick={onBack}>← Back to projects</button>
+        <h2 className='text-2xl font-bold'>Project not found</h2>
+        <p className='text-muted mt-2'>We couldn't find a project with key "{projectKey}".</p>
+      </div>
+    );
+  }
+  return (
+    <div className='container py-10'>
+      <button className='btn btn-outline mb-6 hover:ring-2 hover:ring-indigo-400/50 transition-shadow' onClick={onBack}>← Back to projects</button>
+      <div className='max-w-5xl mx-auto'>
+        <div className='mb-8'>
+          <h1 className='text-4xl sm:text-5xl font-extrabold tracking-tight'>{p.title}</h1>
+          <div className='text-lg text-muted mt-2'>{p.role}</div>
+        </div>
+
+        <div className='mt-8 mb-8'>
+          <MediaCarousel title={p.title} main={p.main} gallery={p.gallery} aspect="16 / 9" />
+        </div>
+
+        <Card className='mb-6'>
+          <CardHeader>
+            <CardTitle>Project Overview</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className='list-disc pl-5 space-y-2 text-sm'>
+              {p.bullets.map((b,i)=>(<li key={i}>{b}</li>))}
+            </ul>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Technologies & Tools</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className='flex flex-wrap gap-2'>
+              {p.stack.map((s,i)=>(<Badge key={i}>{s}</Badge>))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+export default function App(){
+  const [route, setRoute] = useState(parseRoute());
+
+  useEffect(() => {
+    const onHash = () => setRoute(parseRoute());
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
+  }, []);
+
+  const openProject = (key) => {
+    window.location.hash = `/project/${encodeURIComponent(key)}`;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  const goHome = () => {
+    window.location.hash = '';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  if (route.name === 'project') {
+    return <ProjectDetail projectKey={route.key} onBack={goHome} />
+  }
+  return <Home onOpenProject={openProject} />
 }
