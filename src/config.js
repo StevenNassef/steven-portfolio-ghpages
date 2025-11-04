@@ -6,12 +6,12 @@
 // Option 1: GitHub Raw from same repo (FREE)
 // Your assets are in public/projects/ folder
 // Uncomment and use this for GitHub Raw:
-// export const MEDIA_BASE_URL = "https://raw.githubusercontent.com/StevenNassef/steven-portfolio-ghpages/main/public/";
+export const MEDIA_BASE_URL = "https://raw.githubusercontent.com/StevenNassef/steven-portfolio-ghpages/main/public/";
 
 // Option 2: jsDelivr CDN from same repo (Fastest - FREE, Recommended)
 // Your assets are in public/projects/ folder
 // Uncomment and use this for jsDelivr (fastest global CDN):
-export const MEDIA_BASE_URL = "https://cdn.jsdelivr.net/gh/StevenNassef/steven-portfolio-ghpages@main/public/";
+// export const MEDIA_BASE_URL = "https://cdn.jsdelivr.net/gh/StevenNassef/steven-portfolio-ghpages@main/public/";
 
 // Option 3: GitHub Pages from same repo (FREE)
 // If deployed to GitHub Pages, use your GitHub Pages URL:
