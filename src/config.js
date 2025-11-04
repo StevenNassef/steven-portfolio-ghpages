@@ -15,10 +15,10 @@
 
 // Option 3: GitHub Pages from same repo (FREE)
 // If deployed to GitHub Pages, use your GitHub Pages URL:
-// export const MEDIA_BASE_URL = "https://stevennassef.github.io/steven-portfolio-ghpages/public/";
+export const MEDIA_BASE_URL = "https://stevennassef.github.io/steven-portfolio-ghpages/public/";
 
 // Option 4: Local files (current setup - for development)
-export const MEDIA_BASE_URL = "/";
+// export const MEDIA_BASE_URL = "/";
 
 // === PAID OPTIONS ===
 // - Cloudflare R2: Free tier available (10GB storage, 1M reads/month)
