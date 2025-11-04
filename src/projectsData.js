@@ -8,6 +8,7 @@ export const projects = [
             { type: "image", src: "/projects/jumpy_shooter/jumpy_shooter_1.jpeg" },
             { type: "image", src: "/projects/jumpy_shooter/jumpy_shooter_2.jpeg" },
             { type: "image", src: "/projects/jumpy_shooter/jumpy_shooter_3.jpeg" },
+            { type: "image", src: "/projects/jumpy_shooter/jumpy_shooter_3.jpeg" },
             // To add video later:
             // { type: "video", src: "/projects/jumpy_shooter/jumpy_shooter.mp4" },
         ],
@@ -26,6 +27,7 @@ export const projects = [
             { type: "image", src: "/projects/rent_lord/rent_lord_1.jpeg" },
             { type: "image", src: "/projects/rent_lord/rent_lord_2.jpeg" },
             { type: "image", src: "/projects/rent_lord/rent_lord_3.jpeg" },
+            { type: "image", src: "/projects/rent_lord/rent_lord_4.jpeg" },
         ],
         bullets: [
             "Economy systems with daily/weekly events.",
@@ -55,6 +57,7 @@ export const projects = [
         role: "Solo Developer",
         main: "/projects/coin_forge/coin_forge_main.jpeg",
         gallery: [
+            { type: "video", src: "/projects/jumpy_shooter/coin_forge.mp4" },
             { type: "image", src: "/projects/coin_forge/coin_forge_1.jpeg" },
             { type: "image", src: "/projects/coin_forge/coin_forge_2.jpeg" },
             { type: "image", src: "/projects/coin_forge/coin_forge_4.jpeg" },

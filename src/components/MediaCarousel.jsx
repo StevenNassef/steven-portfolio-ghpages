@@ -1,38 +1,33 @@
+// src/components/MediaCarousel.jsx
 import React, { useMemo, useRef, useState, useEffect } from "react";
 
-/** Parse aspect ratio string like "19.5 / 9" into a number (w/h). */
 function parseAspect(aspect) {
     if (typeof aspect === "number") return aspect;
-    const parts = String(aspect || "").split("/");
-    if (parts.length === 2) {
-        const w = Number(parts[0].trim());
-        const h = Number(parts[1].trim());
-        if (Number.isFinite(w) && Number.isFinite(h) && h !== 0) return w / h;
-    }
-    return 19.5 / 9; // default to iPhone 13 Pro Max landscape
+    const [w, h] = String(aspect || "").split("/").map(s => Number(s.trim()));
+    return Number.isFinite(w) && Number.isFinite(h) && h !== 0 ? w / h : 16 / 9;
 }
 
-function FitImage({ src, alt, targetAR, forceContain }) {
-    const [contain, setContain] = useState(!!forceContain);
+function FitImage({ src, alt, targetAR, onDetectAR }) {
+    const [contain, setContain] = useState(false);
     return (
         <img
             src={src}
             alt={alt}
             loading="lazy"
             onLoad={(e) => {
-                if (forceContain) return;
                 const img = e.currentTarget;
-                const ar = img.naturalWidth / img.naturalHeight;
-                // If the image is narrower than the card AR, fit vertically (object-contain).
+                const ar = (img.naturalWidth || 0) / (img.naturalHeight || 1);
+                onDetectAR?.(ar);
                 setContain(ar < targetAR);
             }}
-            className={`w-full h-full ${contain ? "object-contain bg-card" : "object-cover"}`}
+            className={`w-full h-full ${contain ? "object-contain" : "object-cover"} object-center`}
+            style={{ objectFit: contain ? "contain" : "cover" }}
         />
     );
 }
 
-function FitVideo({ src, poster, targetAR, forceContain }) {
-    const [contain, setContain] = useState(!!forceContain);
+function FitVideo({ src, poster, targetAR, onDetectAR }) {
+    const [contain, setContain] = useState(false);
     return (
         <video
             src={src}
@@ -41,112 +36,87 @@ function FitVideo({ src, poster, targetAR, forceContain }) {
             playsInline
             muted
             onLoadedMetadata={(e) => {
-                if (forceContain) return;
                 const v = e.currentTarget;
                 const ar = (v.videoWidth || 0) / (v.videoHeight || 1);
+                onDetectAR?.(ar);
                 setContain(ar < targetAR);
             }}
-            className={`w-full h-full ${contain ? "object-contain bg-card" : "object-cover"}`}
+            className={`w-full h-full ${contain ? "object-contain" : "object-cover"} object-center`}
+            style={{ objectFit: contain ? "contain" : "cover" }}
         />
     );
 }
 
-/**
- * MediaCarousel
- * Props:
- * - title: string
- * - main: string (cover image)
- * - gallery: [{ type: 'image'|'video', src: string, poster?: string }]
- * - aspect: string|number (e.g., "19.5 / 9")
- * - forceContain?: boolean (force object-contain for all slides)
- * - showDots?: boolean
- * - showArrows?: boolean
- */
 export default function MediaCarousel({
                                           title,
                                           main,
                                           gallery = [],
-                                          aspect = "19.5 / 9",
-                                          forceContain = false,
+                                          aspect = "16 / 9",
                                           showDots = true,
                                           showArrows = true,
                                       }) {
+    const GAP_PX = 12;
     const targetAR = useMemo(() => parseAspect(aspect), [aspect]);
 
     const slides = useMemo(() => {
         const items = [];
         if (main) items.push({ type: "image", src: main });
-        for (const g of gallery) {
-            if (!g || !g.src) continue;
-            items.push({ type: g.type === "video" ? "video" : "image", src: g.src, poster: g.poster });
-        }
-        // Fallback to a single empty slide if nothing provided (prevents layout jump)
+        for (const g of gallery) if (g?.src) items.push({ type: g.type === "video" ? "video" : "image", src: g.src, poster: g.poster });
         return items.length ? items : [{ type: "image", src: main || "" }];
     }, [main, gallery]);
 
     const trackRef = useRef(null);
-    const [active, setActive] = useState(0);
-
-    const [slideW, setSlideW] = useState(0);
+    const [containerW, setContainerW] = useState(0);
+    const [ratios, setRatios] = useState({});
+    const onAR = (i, r) => setRatios(prev => (prev[i] === r ? prev : { ...prev, [i]: r }));
 
     useEffect(() => {
         const el = trackRef.current;
         if (!el) return;
-        const GAP = 12; // must match the CSS gap set in .carousel
-
-        const update = () => {
-            const first = el.querySelector(".slide");
-            if (first) {
-                const rect = first.getBoundingClientRect();
-                setSlideW(rect.width + GAP);
-            }
-        };
-
+        const update = () => setContainerW(el.clientWidth || 1);
         update();
-
-        // Keep in sync with container size changes
-        const ro = new ResizeObserver(() => update());
+        const ro = new ResizeObserver(update);
         ro.observe(el);
-
-        window.addEventListener("resize", update);
-        return () => {
-            window.removeEventListener("resize", update);
-            ro.disconnect();
-        };
+        addEventListener("resize", update);
+        return () => { removeEventListener("resize", update); ro.disconnect(); };
     }, []);
 
-    // Update active dot while scrolling
+    const isHintWide = (src, idx) => idx === 0 || /(^|\/)[^/]*(_|-)?main\.[a-z0-9]+$/i.test(src);
+    const isWideAR = (ar) => ar && ar >= (16 / 9) * 0.975; // ~2.5% tolerance
+
+    // Build pages: wide => its own page; narrow => groups of 3
+    const pages = useMemo(() => {
+        const list = slides.map((s, i) => ({ ...s, index: i, ar: ratios[i], hintWide: isHintWide(s.src || "", i) }));
+        const out = [];
+        let buf = [];
+        const flush = () => { if (buf.length) { out.push({ type: "narrow", items: buf }); buf = []; } };
+
+        for (const it of list) {
+            if (it.hintWide || isWideAR(it.ar)) { flush(); out.push({ type: "wide", items: [it] }); }
+            else { buf.push(it); if (buf.length === 3) flush(); }
+        }
+        flush();
+        return out.length ? out : [{ type: "wide", items: [list[0]] }];
+    }, [slides, ratios]);
+
+    const [activePage, setActivePage] = useState(0);
+    useEffect(() => setActivePage(0), [pages.length]);
+
     useEffect(() => {
         const el = trackRef.current;
         if (!el) return;
-        const handler = () => {
-            const width = slideW || el.clientWidth || 1;
-            const idx = Math.round(el.scrollLeft / width);
-            setActive(Math.max(0, Math.min(idx, slides.length - 1)));
-        };
-        el.addEventListener("scroll", handler, { passive: true });
-        return () => el.removeEventListener("scroll", handler);
-    }, [slides.length, slideW]);
+        const onScroll = () => setActivePage(Math.max(0, Math.min(Math.round(el.scrollLeft / (el.clientWidth || 1)), pages.length - 1)));
+        el.addEventListener("scroll", onScroll, { passive: true });
+        return () => el.removeEventListener("scroll", onScroll);
+    }, [pages.length]);
 
-    const goto = (idx) => {
-        const el = trackRef.current;
-        if (!el) return;
-        const clamped = Math.max(0, Math.min(idx, slides.length - 1));
-        const width = slideW || el.clientWidth || 1;
-        el.scrollTo({ left: clamped * width, behavior: "smooth" });
+    const gotoPage = (i) => {
+        const el = trackRef.current; if (!el) return;
+        const idx = Math.max(0, Math.min(i, pages.length - 1));
+        el.scrollTo({ left: idx * (el.clientWidth || 1), behavior: "smooth" });
     };
-
-    const scrollBy = (dir) => goto(active + dir);
-
-    // Keyboard navigation (left/right)
-    useEffect(() => {
-        const handler = (e) => {
-            if (e.key === "ArrowLeft") scrollBy(-1);
-            if (e.key === "ArrowRight") scrollBy(1);
-        };
-        document.addEventListener("keydown", handler);
-        return () => document.removeEventListener("keydown", handler);
-    }, [active, slides.length, slideW]);
+    const frameH = Math.round((containerW || 1) / (16 / 9));
+    const thirdBasis = "calc((100% - 2 * var(--gap, 12px)) / 3)";
 
     return (
         <div className="relative group">
@@ -157,45 +127,39 @@ export default function MediaCarousel({
                 aria-roledescription="carousel"
                 aria-label={`${title} media`}
             >
-                {slides.map((s, i) => (
-                    <div key={i} className="slide" aria-roledescription="slide" aria-label={`${i + 1} of ${slides.length}`}>
-                        <div className="media" style={{ aspectRatio: typeof aspect === "number" ? `${aspect}` : aspect }}>
-                            {s.type === "video" ? (
-                                <FitVideo src={s.src} poster={s.poster} targetAR={targetAR} forceContain={forceContain} />
-                            ) : (
-                                <FitImage
-                                    src={s.src}
-                                    alt={`${title} ${i === 0 ? "main" : `screenshot ${i}`}`}
-                                    targetAR={targetAR}
-                                    forceContain={forceContain}
-                                />
-                            )}
-                        </div>
+                {pages.map((pg, p) => (
+                    <div key={p} className="page" style={{ flex: "0 0 100%", gap: "var(--gap, 12px)", justifyContent: "center" }}>
+                        {pg.type === "wide" ? (
+                            <div className="media bg-card" style={{ aspectRatio: "16 / 9", width: "100%" }}>
+                                {pg.items[0].type === "video"
+                                    ? <FitVideo src={pg.items[0].src} poster={pg.items[0].poster} targetAR={16/9} onDetectAR={(r)=>onAR(pg.items[0].index, r)} />
+                                    : <FitImage src={pg.items[0].src} alt={`${title} cover`} targetAR={16/9} onDetectAR={(r)=>onAR(pg.items[0].index, r)} />}
+                            </div>
+                        ) : (
+                            pg.items.map((it, i) => (
+                                <div key={i} className="media bg-card" style={{ height: `${frameH}px`, flex: `0 0 ${thirdBasis}` }}>
+                                    {it.type === "video"
+                                        ? <FitVideo src={it.src} poster={it.poster} targetAR={16/9} onDetectAR={(r)=>onAR(it.index, r)} />
+                                        : <FitImage src={it.src} alt={`${title} screenshot ${i+1}`} targetAR={16/9} onDetectAR={(r)=>onAR(it.index, r)} />}
+                                </div>
+                            ))
+                        )}
                     </div>
                 ))}
             </div>
 
-            {showArrows && slides.length > 1 && (
+            {showArrows && pages.length > 1 && (
                 <>
-                    <button type="button" aria-label="Previous" onClick={() => scrollBy(-1)} className="btn-circle left-2">
-                        ‹
-                    </button>
-                    <button type="button" aria-label="Next" onClick={() => scrollBy(1)} className="btn-circle right-2">
-                        ›
-                    </button>
+                    <button type="button" aria-label="Previous" onClick={()=>gotoPage(activePage-1)} className="btn-circle left-2">‹</button>
+                    <button type="button" aria-label="Next" onClick={()=>gotoPage(activePage+1)} className="btn-circle right-2">›</button>
                 </>
             )}
 
-            {showDots && slides.length > 1 && (
+            {showDots && pages.length > 1 && (
                 <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-2">
-                    {slides.map((_, i) => (
-                        <button
-                            key={i}
-                            type="button"
-                            aria-label={`Go to slide ${i + 1}`}
-                            onClick={() => goto(i)}
-                            className={`h-2 w-2 rounded-full ${i === active ? "bg-white/90" : "bg-white/40"}`}
-                        />
+                    {Array.from({ length: pages.length }).map((_, i) => (
+                        <button key={i} type="button" aria-label={`Go to page ${i+1}`} onClick={()=>gotoPage(i)}
+                                className={`h-2 w-2 rounded-full ${i===activePage? "bg-white/90":"bg-white/40"}`} />
                     ))}
                 </div>
             )}
