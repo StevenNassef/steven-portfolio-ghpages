@@ -8,7 +8,7 @@ function parseAspect(aspect) {
     return Number.isFinite(w) && Number.isFinite(h) && h !== 0 ? w / h : 16 / 9;
 }
 
-function FitImage({ src, alt, targetAR, onDetectAR, isWide = false }) {
+function FitImage({ src, alt, targetAR, onDetectAR, isWide = false, onError }) {
     const [contain, setContain] = useState(false);
     return (
         <img
@@ -22,13 +22,18 @@ function FitImage({ src, alt, targetAR, onDetectAR, isWide = false }) {
                 // Narrow images should always use contain to fit within rounded frame
                 setContain(!isWide || ar < targetAR);
             }}
+            onError={(e) => {
+                // Hide image if it fails to load
+                e.currentTarget.style.display = 'none';
+                onError?.(src);
+            }}
             className={`w-full h-full ${(!isWide || contain) ? "object-contain" : "object-cover"} object-center`}
             style={{ objectFit: (!isWide || contain) ? "contain" : "cover" }}
         />
     );
 }
 
-function FitVideo({ src, poster, targetAR, onDetectAR, isWide = false }) {
+function FitVideo({ src, poster, targetAR, onDetectAR, isWide = false, onError }) {
     const [contain, setContain] = useState(false);
     return (
         <video
@@ -46,6 +51,11 @@ function FitVideo({ src, poster, targetAR, onDetectAR, isWide = false }) {
                 onDetectAR?.(ar);
                 // Narrow images should always use contain to fit within rounded frame
                 setContain(!isWide || ar < targetAR);
+            }}
+            onError={(e) => {
+                // Hide video if it fails to load
+                e.currentTarget.style.display = 'none';
+                onError?.(src);
             }}
             className={`w-full h-full ${(!isWide || contain) ? "object-contain" : "object-cover"} object-center`}
             style={{ objectFit: (!isWide || contain) ? "contain" : "cover" }}
@@ -68,15 +78,30 @@ export default function MediaCarousel({
                                       }) {
     const targetAR = useMemo(() => parseAspect(aspect), [aspect]);
 
-    // Flatten slides
+    // Track which media files failed to load
+    const [failedMedia, setFailedMedia] = useState(new Set());
+
+    // Flatten slides and filter out failed ones
     const slides = useMemo(() => {
         const items = [];
         for (const g of gallery) {
             if (!g?.src) continue;
+            const src = g.src;
+            // Skip if we know this media failed to load
+            if (failedMedia.has(src)) continue;
             items.push({ type: g.type === "video" ? "video" : "image", src: g.src, poster: g.poster });
         }
         return items.length ? items : [];
-    }, [gallery]);
+    }, [gallery, failedMedia]);
+
+    // Handler to mark media as failed
+    const handleMediaError = (src) => {
+        setFailedMedia(prev => {
+            const next = new Set(prev);
+            next.add(src);
+            return next;
+        });
+    };
 
     const trackRef = useRef(null);
     const itemRefs = useRef({});
@@ -224,10 +249,14 @@ export default function MediaCarousel({
                 {slideConfigs.map((slide, i) => {
                     const isWide = slide.isWide;
                     const isVideo = slide.type === "video";
+                    const isFailed = failedMedia.has(slide.src);
+                    
+                    // Skip rendering if this media failed to load
+                    if (isFailed) return null;
                     
                     return (
                         <div
-                            key={i}
+                            key={`${slide.src}-${i}`}
                             ref={(el) => { itemRefs.current[i] = el; }}
                             className="media bg-card"
                             style={{
@@ -249,6 +278,7 @@ export default function MediaCarousel({
                                     targetAR={16 / 9}
                                     onDetectAR={(r) => onAR(i, r)}
                                     isWide={isWide}
+                                    onError={() => handleMediaError(slide.src)}
                                 />
                             ) : (
                                 <FitImage
@@ -257,6 +287,7 @@ export default function MediaCarousel({
                                     targetAR={16 / 9}
                                     onDetectAR={(r) => onAR(i, r)}
                                     isWide={isWide}
+                                    onError={() => handleMediaError(slide.src)}
                                 />
                             )}
                         </div>

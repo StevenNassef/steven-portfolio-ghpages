@@ -1,19 +1,81 @@
 import { getMediaUrl } from './config.js';
 
+/**
+ * Dynamically generates media paths based on naming convention:
+ * - Main: {key}_main.jpeg or {key}_main.PNG
+ * - Gallery: {key}_1.jpeg, {key}_2.jpeg, etc. (numbered sequentially)
+ * - Video: {key}.mp4 or {key}.MP4
+ * - Poster: First numbered image (e.g., {key}_1.jpeg)
+ * 
+ * @param {string} key - Project key (folder name)
+ * @param {object} options - Configuration options
+ * @param {number} options.maxImages - Maximum number of images to generate (default: 20)
+ * @param {string[]} options.extensions - Image extensions to try (default: ['.jpeg', '.PNG'])
+ */
+function generateMediaPaths(key, options = {}) {
+    const { maxImages = 20, extensions = ['.jpeg', '.PNG'] } = options;
+    const projectPath = `/projects/${key}`;
+    
+    // Main image - try both extensions
+    const main = getMediaUrl(`${projectPath}/${key}_main.jpeg`);
+    
+    // Gallery array
+    const gallery = [];
+    
+    // Try to add video (both lowercase and uppercase extensions)
+    const videoExtensions = ['.mp4', '.MP4'];
+    for (const ext of videoExtensions) {
+        const videoPath = getMediaUrl(`${projectPath}/${key}${ext}`);
+        // Try to get poster from first numbered image
+        const poster = getMediaUrl(`${projectPath}/${key}_1.jpeg`) || 
+                       getMediaUrl(`${projectPath}/${key}_1.PNG`);
+        gallery.push({
+            type: "video",
+            src: videoPath,
+            poster: poster
+        });
+    }
+    
+    // Generate numbered images (1 to maxImages)
+    // Use the first extension as default, or try all if multiple specified
+    for (let i = 1; i <= maxImages; i++) {
+        // If only one extension, use it; otherwise try all
+        if (extensions.length === 1) {
+            gallery.push({
+                type: "image",
+                src: getMediaUrl(`${projectPath}/${key}_${i}${extensions[0]}`)
+            });
+        } else {
+            // Try all extensions - component will handle which ones load
+            for (const ext of extensions) {
+                gallery.push({
+                    type: "image",
+                    src: getMediaUrl(`${projectPath}/${key}_${i}${ext}`)
+                });
+            }
+        }
+    }
+    
+    return { main, gallery };
+}
+
 export const projects = [
+    {
+        key: "kortifo",
+        title: "Kortifo",
+        role: "Solo Developer",
+        ...generateMediaPaths("kortifo", { maxImages: 16, extensions: ['.PNG'] }),
+        bullets: [
+            "Add your project description here.",
+            "Add more bullet points as needed.",
+        ],
+        stack: ["Unity", "C#"],
+    },
     {
         key: "jumpy_shooter",
         title: "Jumpy Shooter",
         role: "Solo Developer",
-        main: getMediaUrl("/projects/jumpy_shooter/jumpy_shooter_main.jpeg"),
-        gallery: [
-            { type: "video", src: getMediaUrl("/projects/jumpy_shooter/jumpy_shooter.mp4"), poster: getMediaUrl("/projects/jumpy_shooter/jumpy_shooter_1.jpeg") },
-            { type: "image", src: getMediaUrl("/projects/jumpy_shooter/jumpy_shooter_2.jpeg") },
-            { type: "image", src: getMediaUrl("/projects/jumpy_shooter/jumpy_shooter_3.jpeg") },
-            { type: "image", src: getMediaUrl("/projects/jumpy_shooter/jumpy_shooter_3.jpeg") },
-            // To add video later:
-            // { type: "video", src: "/projects/jumpy_shooter/jumpy_shooter.mp4" },
-        ],
+        ...generateMediaPaths("jumpy_shooter"),
         bullets: [
             "Fast, responsive gameplay with touch controls.",
             "Content pipeline for levels & enemy waves.",
@@ -24,13 +86,7 @@ export const projects = [
         key: "rent_lord",
         title: "Rent Lord",
         role: "Solo Developer",
-        main: getMediaUrl("/projects/rent_lord/rent_lord_main.jpeg"),
-        gallery: [
-            { type: "video", src: getMediaUrl("/projects/rent_lord/rent_lord.mp4"), poster: getMediaUrl("/projects/rent_lord/rent_lord_1.jpeg") },
-            { type: "image", src: getMediaUrl("/projects/rent_lord/rent_lord_2.jpeg") },
-            { type: "image", src: getMediaUrl("/projects/rent_lord/rent_lord_3.jpeg") },
-            { type: "image", src: getMediaUrl("/projects/rent_lord/rent_lord_4.jpeg") },
-        ],
+        ...generateMediaPaths("rent_lord"),
         bullets: [
             "Economy systems with daily/weekly events.",
             "Live-ops hooks & telemetry.",
@@ -41,12 +97,7 @@ export const projects = [
         key: "rocket_factory",
         title: "Rocket Factory",
         role: "Solo Developer",
-        main: getMediaUrl("/projects/rocket_factory/rocket_factory_main.jpeg"),
-        gallery: [
-            { type: "video", src: getMediaUrl("/projects/rocket_factory/rocket_factory.mp4"), poster: getMediaUrl("/projects/coin_forge/rocket_factory_1.jpeg") },
-            { type: "image", src: getMediaUrl("/projects/rocket_factory/rocket_factory_2.jpeg") },
-            { type: "image", src: getMediaUrl("/projects/rocket_factory/rocket_factory_3.jpeg") },
-        ],
+        ...generateMediaPaths("rocket_factory"),
         bullets: [
             "Physics-driven assembly gameplay.",
             "Optimized asset pipeline for mobile.",
@@ -57,12 +108,7 @@ export const projects = [
         key: "coin_forge",
         title: "Coin Forge",
         role: "Solo Developer",
-        main: getMediaUrl("/projects/coin_forge/coin_forge_main.jpeg"),
-        gallery: [
-            { type: "video", src: getMediaUrl("/projects/coin_forge/coin_forge.mp4"), poster: getMediaUrl("/projects/coin_forge/coin_forge_1.jpeg") },
-            { type: "image", src: getMediaUrl("/projects/coin_forge/coin_forge_2.jpeg") },
-            { type: "image", src: getMediaUrl("/projects/coin_forge/coin_forge_4.jpeg") },
-        ],
+        ...generateMediaPaths("coin_forge"),
         bullets: [
             "Incremental mechanics & balancing tools.",
             "Store submission, analytics, and updates.",

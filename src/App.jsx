@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { Github, Linkedin, Mail, Download, Gamepad2, Wrench, Cpu, Rocket } from 'lucide-react'
 import { projects } from './projectsData.js'
 import MediaCarousel from "./components/MediaCarousel.jsx";
+import { getMediaUrl } from './config.js';
 
 const Badge = ({children}) => <span className='badge'>{children}</span>
 const Card = ({children, className = '', ...props}) => <div className={`card ${className}`} {...props}>{children}</div>
@@ -33,7 +34,14 @@ function Home({ onOpenProject }) {
       <header className='container py-16 flex flex-col gap-6'>
         <div className='flex flex-col md:flex-row md:items-center md:justify-between gap-6'>
           <div>
-            <h1 className='text-4xl sm:text-5xl font-extrabold tracking-tight'>Steven Nassef Henry</h1>
+            <div className='flex items-center gap-4 mb-3'>
+              <img 
+                src={getMediaUrl("/profile/profile.png")} 
+                alt="Steven Nassef Henry" 
+                className='w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-border'
+              />
+              <h1 className='text-4xl sm:text-5xl font-extrabold tracking-tight'>Steven Nassef Henry</h1>
+            </div>
             <p className='mt-3 text-lg sm:text-xl text-muted max-w-2xl'>
               Senior Unity Engineer — gameplay systems, live‑ops, and high‑performance mobile experiences.
             </p>

@@ -6,7 +6,7 @@
 // Option 1: GitHub Raw from same repo (FREE)
 // Your assets are in public/projects/ folder
 // Uncomment and use this for GitHub Raw:
-export const MEDIA_BASE_URL = "https://raw.githubusercontent.com/StevenNassef/steven-portfolio-ghpages/main/public/";
+// export const MEDIA_BASE_URL = "https://raw.githubusercontent.com/StevenNassef/steven-portfolio-ghpages/main/public/";
 
 // Option 2: jsDelivr CDN from same repo (Fastest - FREE, Recommended)
 // Your assets are in public/projects/ folder
@@ -18,7 +18,7 @@ export const MEDIA_BASE_URL = "https://raw.githubusercontent.com/StevenNassef/st
 // export const MEDIA_BASE_URL = "https://stevennassef.github.io/steven-portfolio-ghpages/public/";
 
 // Option 4: Local files (current setup - for development)
-// export const MEDIA_BASE_URL = "/";
+export const MEDIA_BASE_URL = "/";
 
 // === PAID OPTIONS ===
 // - Cloudflare R2: Free tier available (10GB storage, 1M reads/month)
