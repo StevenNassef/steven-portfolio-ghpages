@@ -72,6 +72,28 @@ export const projects = [
         stack: ["Unity", "C#"],
     },
     {
+        key: "cairo_invaiders",
+        title: "The Second Time Aliens Invaded Cairo",
+        role: "Solo Developer",
+        ...generateMediaPaths("cairo_invaiders", { maxImages: 16, extensions: ['.PNG'] }),
+        bullets: [
+            "Fast, responsive gameplay with touch controls.",
+            "Content pipeline for levels & enemy waves.",
+        ],
+        stack: ["Unity", "C#", "Mobile UI"],
+    },
+    {
+        key: "zarzura",
+        title: "Zarzura",
+        role: "Solo Developer",
+        ...generateMediaPaths("zarzura"),
+        bullets: [
+            "Fast, responsive gameplay with touch controls.",
+            "Content pipeline for levels & enemy waves.",
+        ],
+        stack: ["Unity", "C#", "Mobile UI"],
+    },
+    {
         key: "jumpy_shooter",
         title: "Jumpy Shooter",
         role: "Solo Developer",

@@ -149,9 +149,12 @@ export default function MediaCarousel({
     // Determine if each slide is wide or narrow
     const slideConfigs = useMemo(() => {
         return slides.map((s, i) => {
-            // Videos are always narrow
             const isVideo = s.type === "video";
-            const wide = !isVideo && (isHintWide(s.src, i) || isWideAR(ratios[i]));
+            // Videos default to narrow (vertical), only become wide if aspect ratio is detected as wide
+            // Images are wide if they match the hint or have a wide aspect ratio
+            const wide = isVideo 
+                ? isWideAR(ratios[i])  // Videos: only wide if aspect ratio is detected and wide
+                : (isHintWide(s.src, i) || isWideAR(ratios[i]));  // Images: hint or wide aspect ratio
             return {
                 ...s,
                 index: i,
@@ -266,9 +269,11 @@ export default function MediaCarousel({
                                 minWidth: isWide ? "100%" : thirdBasis,
                                 aspectRatio: isWide ? "16 / 9" : undefined,
                                 height: isWide ? undefined : `${frameH}px`,
-                                position: isVideo ? "sticky" : "relative",
-                                left: isVideo ? 0 : "auto",
-                                zIndex: isVideo ? 10 : "auto",
+                                // Only make narrow videos sticky (vertical videos stay on left)
+                                // Wide videos (horizontal) scroll normally like wide images
+                                position: (isVideo && !isWide) ? "sticky" : "relative",
+                                left: (isVideo && !isWide) ? 0 : "auto",
+                                zIndex: (isVideo && !isWide) ? 10 : "auto",
                             }}
                         >
                             {slide.type === "video" ? (
