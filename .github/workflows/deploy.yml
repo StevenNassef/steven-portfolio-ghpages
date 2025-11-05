@@ -11,6 +11,8 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -20,10 +22,11 @@ jobs:
       - run: npm run build
         env:
           BASE_PATH: '/${{ github.event.repository.name }}/'
-          # Set VITE_MEDIA_BASE_URL in GitHub: Settings → Secrets and variables → Actions → New repository secret
-          # If secret doesn't exist, uses default jsDelivr CDN URL
-          # Note: Linter warning is expected - secret may not exist yet
-          VITE_MEDIA_BASE_URL: ${{ secrets.VITE_MEDIA_BASE_URL || 'https://cdn.jsdelivr.net/gh/StevenNassef/steven-portfolio-ghpages@main/public/' }}
+          # Set VITE_MEDIA_BASE_URL in GitHub: Settings → Secrets and variables → Actions → Variables tab
+          # Or set in github-pages environment: Settings → Environments → github-pages → Environment variables
+          # If variable doesn't exist, uses default jsDelivr CDN URL
+          # Priority: environment vars → repository vars → default
+          VITE_MEDIA_BASE_URL: ${{ vars.VITE_MEDIA_BASE_URL || 'https://cdn.jsdelivr.net/gh/StevenNassef/steven-portfolio-ghpages@main/public/' }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

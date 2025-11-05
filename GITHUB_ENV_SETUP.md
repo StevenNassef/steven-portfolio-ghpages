@@ -2,9 +2,9 @@
 
 This guide shows you how to use GitHub environment variables for your `MEDIA_BASE_URL` configuration.
 
-## Option 1: Repository Secrets (Recommended for Private Values)
+## Option 1: Repository Variables (Recommended)
 
-Use this if you want to keep the URL private or change it easily from GitHub UI.
+Use this for non-sensitive configuration values. Variables are visible to all collaborators but not encrypted.
 
 ### Steps:
 
@@ -14,14 +14,15 @@ Use this if you want to keep the URL private or change it easily from GitHub UI.
 2. **Open Settings**
    - Click on **Settings** tab in your repository
 
-3. **Go to Secrets**
+3. **Go to Variables**
    - In the left sidebar, click **Secrets and variables** → **Actions**
+   - Click on the **Variables** tab
 
-4. **Add New Repository Secret**
-   - Click **New repository secret**
+4. **Add New Repository Variable**
+   - Click **New repository variable**
    - Name: `VITE_MEDIA_BASE_URL`
    - Value: Your CDN URL (e.g., `https://cdn.jsdelivr.net/gh/StevenNassef/steven-portfolio-ghpages@main/public/`)
-   - Click **Add secret**
+   - Click **Add variable**
 
 ### Available Options:
 
@@ -38,50 +39,38 @@ https://stevennassef.github.io/steven-portfolio-ghpages/
 
 ---
 
-## Option 2: GitHub Environment Variables
+## Option 2: Environment Variables (github-pages environment)
 
-Use this for environment-specific configurations (e.g., staging vs production).
+Use this for environment-specific configurations. The workflow is already configured to use the `github-pages` environment.
 
 ### Steps:
 
 1. **Go to your GitHub repository Settings**
    - Navigate to **Settings** → **Environments**
 
-2. **Create New Environment**
-   - Click **New environment**
-   - Name: `github-pages` (or `production`)
+2. **Configure github-pages Environment**
+   - Click on **github-pages** environment (or create it if it doesn't exist)
    - Click **Configure environment**
 
 3. **Add Environment Variable**
-   - Scroll to **Environment variables**
+   - Scroll to **Environment variables** section
    - Click **Add variable**
    - Name: `VITE_MEDIA_BASE_URL`
-   - Value: Your CDN URL
+   - Value: Your CDN URL (e.g., `https://cdn.jsdelivr.net/gh/StevenNassef/steven-portfolio-ghpages@main/public/`)
    - Click **Save**
 
-4. **Update workflow to use environment**
+4. **Workflow will use it automatically**
    - The workflow is already configured to use the `github-pages` environment
-   - It will automatically use the environment variable
+   - Environment variables are accessible via `vars.VITE_MEDIA_BASE_URL`
 
 ---
 
-## Option 3: Repository Variables (Public, Less Secure)
+## Priority Order
 
-Use this for non-sensitive values that you want to share publicly.
+The workflow checks in this order:
 
-### Steps:
-
-1. **Go to Repository Settings**
-   - Navigate to **Settings** → **Secrets and variables** → **Actions**
-
-2. **Go to Variables Tab**
-   - Click on **Variables** tab
-
-3. **Add New Variable**
-   - Click **New repository variable**
-   - Name: `VITE_MEDIA_BASE_URL`
-   - Value: Your CDN URL
-   - Click **Add variable**
+1. **Repository Variable** (`vars.VITE_MEDIA_BASE_URL`) - highest priority
+2. **Default CDN URL** (fallback) - `https://cdn.jsdelivr.net/gh/StevenNassef/steven-portfolio-ghpages@main/public/`
 
 ---
 
@@ -89,16 +78,10 @@ Use this for non-sensitive values that you want to share publicly.
 
 The GitHub Actions workflow (`.github/workflows/deploy.yml`) is configured to:
 
-1. **Check for secret first**: `secrets.VITE_MEDIA_BASE_URL`
-2. **Check environment variable**: `env.VITE_MEDIA_BASE_URL`
-3. **Fallback to default**: jsDelivr CDN URL
+1. **Check for repository variable**: `vars.VITE_MEDIA_BASE_URL`
+2. **Fallback to default**: jsDelivr CDN URL
 
-### Priority Order:
-
-1. **Repository Secret** (highest priority)
-2. **Environment Variable** (from `github-pages` environment)
-3. **Repository Variable**
-4. **Default CDN** (fallback)
+**Note**: The workflow uses the `github-pages` environment, so environment variables set in that environment will also be accessible.
 
 ---
 
@@ -142,12 +125,13 @@ After setting up the environment variable:
 
 ## Quick Setup (Recommended)
 
-For the fastest setup, use **Repository Secret**:
+For the fastest setup, use **Repository Variable**:
 
 1. Go to: `Settings` → `Secrets and variables` → `Actions`
-2. Click: `New repository secret`
-3. Name: `VITE_MEDIA_BASE_URL`
-4. Value: `https://cdn.jsdelivr.net/gh/StevenNassef/steven-portfolio-ghpages@main/public/`
-5. Click: `Add secret`
-6. Done! Next build will use it automatically.
+2. Click: `Variables` tab
+3. Click: `New repository variable`
+4. Name: `VITE_MEDIA_BASE_URL`
+5. Value: `https://cdn.jsdelivr.net/gh/StevenNassef/steven-portfolio-ghpages@main/public/`
+6. Click: `Add variable`
+7. Done! Next build will use it automatically.
 
