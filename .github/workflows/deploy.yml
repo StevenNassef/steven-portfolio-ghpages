@@ -7,6 +7,8 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  # Allow access to repository variables
+  variables: read
 
 jobs:
   build:
@@ -20,6 +22,8 @@ jobs:
       - run: npm run build
         env:
           BASE_PATH: '/${{ github.event.repository.name }}/'
+          # Priority: secrets → vars → default
+          VITE_MEDIA_BASE_URL: ${{ secrets.VITE_MEDIA_BASE_URL || vars.VITE_MEDIA_BASE_URL || 'https://cdn.jsdelivr.net/gh/StevenNassef/steven-portfolio-ghpages@main/public/' }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
