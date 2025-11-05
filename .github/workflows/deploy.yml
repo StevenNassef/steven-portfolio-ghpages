@@ -7,8 +7,6 @@ permissions:
   contents: read
   pages: write
   id-token: write
-  # Allow access to repository variables
-  variables: read
 
 jobs:
   build:
@@ -22,8 +20,10 @@ jobs:
       - run: npm run build
         env:
           BASE_PATH: '/${{ github.event.repository.name }}/'
-          # Priority: secrets → vars → default
-          VITE_MEDIA_BASE_URL: ${{ secrets.VITE_MEDIA_BASE_URL || vars.VITE_MEDIA_BASE_URL || 'https://cdn.jsdelivr.net/gh/StevenNassef/steven-portfolio-ghpages@main/public/' }}
+          # Set VITE_MEDIA_BASE_URL in GitHub: Settings → Secrets and variables → Actions → New repository secret
+          # If secret doesn't exist, uses default jsDelivr CDN URL
+          # Note: Linter warning is expected - secret may not exist yet
+          VITE_MEDIA_BASE_URL: ${{ secrets.VITE_MEDIA_BASE_URL || 'https://cdn.jsdelivr.net/gh/StevenNassef/steven-portfolio-ghpages@main/public/' }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
