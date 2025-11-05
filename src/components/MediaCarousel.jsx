@@ -162,7 +162,7 @@ export default function MediaCarousel({
     }, [slides, ratios]);
 
     const gap = 20; // gap in pixels
-    const frameH = Math.round((containerW || 1) / (16 / 9));
+    const frameH = Math.round(((containerW - 2 * gap) / 3) * (19.5 / 9));
     const thirdBasis = `calc((100% - ${2 * gap}px) / 3)`;
 
     // Calculate scroll positions for each item
