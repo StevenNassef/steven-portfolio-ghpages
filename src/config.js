@@ -27,3 +27,36 @@ export function getMediaUrl(path) {
     : `${MEDIA_BASE_URL}/${cleanPath}`;
 }
 
+// Firebase configuration - loaded from a single JSON string environment variable
+export function getFirebaseConfig() {
+  const firebaseConfigString = import.meta.env.VITE_FIREBASE_CONFIG;
+  
+  if (!firebaseConfigString) {
+    return {
+      apiKey: "",
+      authDomain: "",
+      projectId: "",
+      storageBucket: "",
+      messagingSenderId: "",
+      appId: "",
+      measurementId: "",
+    };
+  }
+
+  try {
+    // Parse the JSON string from environment variable
+    return JSON.parse(firebaseConfigString);
+  } catch (error) {
+    console.error("Error parsing Firebase config from environment variable:", error);
+    return {
+      apiKey: "",
+      authDomain: "",
+      projectId: "",
+      storageBucket: "",
+      messagingSenderId: "",
+      appId: "",
+      measurementId: "",
+    };
+  }
+}
+

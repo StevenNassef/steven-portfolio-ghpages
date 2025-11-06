@@ -26,6 +26,9 @@ jobs:
           # Or set in github-pages environment: Settings → Environments → github-pages → Environment variables
           VITE_MEDIA_BASE_URL: ${{ vars.VITE_MEDIA_BASE_URL }}
           VITE_CV_URL: ${{ vars.VITE_CV_URL }}
+          # Firebase configuration - single JSON object as a string
+          # Set VITE_FIREBASE_CONFIG in GitHub repository secrets: Settings → Secrets and variables → Actions → Secrets tab
+          VITE_FIREBASE_CONFIG: ${{ secrets.VITE_FIREBASE_CONFIG }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
