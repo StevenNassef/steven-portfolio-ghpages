@@ -89,37 +89,6 @@ function Home({ onOpenProject }) {
         </div>
       </Section>
 
-      <Section id='case-study' title='Case Study — Mergedom: Home Design' subtitle='Selected contributions from a large‑scale, ad/IAP‑driven mobile title.'>
-        <div className='grid md:grid-cols-2 gap-6'>
-          {projects.filter(p => p.key === 'mergdom').map(p => (
-            <Card
-              key={p.key}
-              onClick={() => onOpenProject(p.key)}
-              className='cursor-pointer hover:ring-2 hover:ring-indigo-400/50 transition-shadow'
-            >
-              <CardHeader>
-                <CardTitle>{p.title}</CardTitle>
-                <div className='text-sm text-muted'>Senior Unity Engineer</div>
-              </CardHeader>
-              <CardContent>
-                <MediaCarousel
-                  title={p.title}
-                  main={p.main}
-                  gallery={p.gallery}
-                  aspect="16 / 9"
-                />
-                <ul className='list-disc pl-5 space-y-1 text-sm mt-4'>
-                  {p.bullets.map((b,i)=>(<li key={i}>{b}</li>))}
-                </ul>
-                <div className='flex flex-wrap gap-2 pt-3'>
-                  {p.stack.map((s,i)=>(<Badge key={i}>{s}</Badge>))}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </Section>
-
       <Section id='projects' title='Selected Projects'>
         <div className='grid md:grid-cols-2 gap-6'>
           {projects.map(p => (
