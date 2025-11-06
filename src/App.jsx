@@ -7,7 +7,7 @@ import { getMediaUrl, getCvUrl } from './config.js';
 const Badge = ({children}) => <span className='badge'>{children}</span>
 const Card = ({children, className = '', ...props}) => <div className={`card ${className}`} {...props}>{children}</div>
 const CardHeader = ({children}) => <div className='card-header'>{children}</div>
-const CardTitle = ({children}) => <div className='card-title'>{children}</div>
+const CardTitle = ({children, className = ''}) => <div className={`card-title ${className}`}>{children}</div>
 const CardContent = ({children}) => <div className='card-content'>{children}</div>
 
 // Platform icon mapping with actual logos
@@ -176,29 +176,31 @@ function Home({ onOpenProject }) {
                     <div>• {p.role}</div>
                   )}
                 </div>
-                <div className='flex flex-wrap items-center gap-3 mt-2 text-sm text-muted'>
-                  {p.duration && (
-                    <div className='flex items-center gap-1.5'>
-                      <Clock className='h-3.5 w-3.5' />
-                      <span>{p.duration}</span>
-                    </div>
-                  )}
-                  {p.teamSize && (
-                    <div className='flex items-center gap-1.5'>
-                      <Users className='h-3.5 w-3.5' />
-                      <span>{p.teamSize} {p.teamSize === 1 ? 'person' : 'people'}</span>
+                <div className='flex flex-wrap items-center justify-between gap-3 mt-2 text-sm text-muted'>
+                  <div className='flex flex-wrap items-center gap-3'>
+                    {p.duration && (
+                      <div className='flex items-center gap-1.5'>
+                        <Clock className='h-3.5 w-3.5' />
+                        <span>{p.duration}</span>
+                      </div>
+                    )}
+                    {p.teamSize && (
+                      <div className='flex items-center gap-1.5'>
+                        <Users className='h-3.5 w-3.5' />
+                        <span>{p.teamSize} {p.teamSize === 1 ? 'person' : 'people'}</span>
+                      </div>
+                    )}
+                  </div>
+                  {p.links && (p.links.appStore || p.links.playStore || p.links.steam || p.links.itch || p.links.github) && (
+                    <div className='flex flex-wrap items-center gap-2' onClick={(e) => e.stopPropagation()}>
+                      <PlatformIcon platform="appStore" url={p.links.appStore} size="sm" />
+                      <PlatformIcon platform="playStore" url={p.links.playStore} size="sm" />
+                      <PlatformIcon platform="steam" url={p.links.steam} size="sm" />
+                      <PlatformIcon platform="itch" url={p.links.itch} size="sm" />
+                      <PlatformIcon platform="github" url={p.links.github} size="sm" />
                     </div>
                   )}
                 </div>
-                {p.links && (p.links.appStore || p.links.playStore || p.links.steam || p.links.itch || p.links.github) && (
-                  <div className='flex flex-wrap items-center gap-2 mt-3'>
-                    <PlatformIcon platform="appStore" url={p.links.appStore} size="sm" />
-                    <PlatformIcon platform="playStore" url={p.links.playStore} size="sm" />
-                    <PlatformIcon platform="steam" url={p.links.steam} size="sm" />
-                    <PlatformIcon platform="itch" url={p.links.itch} size="sm" />
-                    <PlatformIcon platform="github" url={p.links.github} size="sm" />
-                  </div>
-                )}
               </CardHeader>
               <CardContent>
                 <MediaCarousel

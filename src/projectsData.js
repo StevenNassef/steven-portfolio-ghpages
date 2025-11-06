@@ -90,8 +90,8 @@ export const projects = [
             // github: "https://github.com/...",
         },
         metrics: {
-            // downloads: "10K+",
-            // rating: "4.5",
+            downloads: "150K+",
+            rating: "4.4",
         },
     },
     {
@@ -119,8 +119,7 @@ export const projects = [
             "Balanced touch controls for precision gameplay on various screen sizes.",
         ],
         links: {
-            // appStore: "https://apps.apple.com/...",
-            // playStore: "https://play.google.com/...",
+            itch: "https://omarelsayed997.itch.io/return-of-the-evil-eye",
         },
     },
     {
@@ -148,11 +147,7 @@ export const projects = [
             "Optimized UI performance for smooth transitions and animations.",
         ],
         links: {
-            // appStore: "https://apps.apple.com/...",
-            // playStore: "https://play.google.com/...",
-            // steam: "https://store.steampowered.com/...",
-            // itch: "https://...itch.io/...",
-            // github: "https://github.com/...",
+            appStore: "https://apps.apple.com/app/id1599258541",
           }
     },
     {
@@ -181,8 +176,7 @@ export const projects = [
             "Managed full app store submission process including metadata, screenshots, and compliance.",
         ],
         links: {
-            // appStore: "https://apps.apple.com/...",
-            // playStore: "https://play.google.com/...",
+            appStore: "https://apps.apple.com/app/id1524642004",
         },
     },
     {
@@ -211,7 +205,6 @@ export const projects = [
         ],
         links: {
             appStore: "https://apps.apple.com/us/app/rent-lord/id1530679994",
-            // playStore: "https://play.google.com/...",
         },
     },
     {
@@ -239,7 +232,7 @@ export const projects = [
             "Balanced physics parameters for satisfying gameplay while maintaining realism.",
         ],
         links: {
-            // appStore: "https://apps.apple.com/...",
+            appStore: "https://apps.apple.com/app/id1524159055",
             // playStore: "https://play.google.com/...",
         },
     },
@@ -268,7 +261,7 @@ export const projects = [
             "Designed flexible level generation system that maintains challenge progression.",
         ],
         links: {
-            // appStore: "https://apps.apple.com/...",
+            appStore: "https://apps.apple.com/app/id1514741492",
             // playStore: "https://play.google.com/...",
         },
     },
