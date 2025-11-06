@@ -3,6 +3,7 @@ import { Github, Linkedin, Mail, Download, Gamepad2, Wrench, Cpu, Rocket, Clock,
 import { projects, experiences, companyConfig } from './projectsData.js'
 import MediaCarousel from "./components/MediaCarousel.jsx";
 import { getMediaUrl, getCvUrl } from './config.js';
+import { updateMetaTags, resetMetaTags } from './utils/metaTags.js';
 
 const Badge = ({children}) => <span className='badge'>{children}</span>
 const Card = ({children, className = '', ...props}) => <div className={`card ${className}`} {...props}>{children}</div>
@@ -597,6 +598,38 @@ export default function App(){
     window.addEventListener('hashchange', onHash);
     return () => window.removeEventListener('hashchange', onHash);
   }, []);
+
+  // Update meta tags based on current route
+  useEffect(() => {
+    if (route.name === 'project') {
+      const project = projects.find(p => p.key === route.key);
+      if (project) {
+        const projectUrl = `/#/project/${encodeURIComponent(route.key)}`;
+        
+        // Get project image - prefer main, then first gallery image, then poster from video, then default
+        let projectImage = project.main;
+        if (!projectImage && project.gallery && project.gallery.length > 0) {
+          const firstItem = project.gallery[0];
+          projectImage = firstItem.poster || firstItem.src;
+        }
+        if (!projectImage) {
+          projectImage = '/profile/profile.png';
+        }
+        
+        const projectDescription = project.description || `${project.title} - ${project.jobTitle || 'Project'}`;
+        
+        updateMetaTags({
+          title: `${project.title} — ${project.jobTitle || 'Project'} | Steven Henry`,
+          description: projectDescription,
+          image: projectImage,
+          url: projectUrl,
+          type: 'article',
+        });
+      }
+    } else {
+      resetMetaTags();
+    }
+  }, [route]);
 
   const openProject = (key) => {
     window.location.hash = `/project/${encodeURIComponent(key)}`;
