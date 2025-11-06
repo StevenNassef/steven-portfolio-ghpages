@@ -289,7 +289,7 @@ function Home({ onOpenProject }) {
           <div>
             <div className='flex items-center gap-4 mb-3'>
               <img 
-                src={getMediaUrl("/profile/profile.png")} 
+                src={getMediaUrl("/profile/profile.jpg")} 
                 alt="Steven Nassef Henry" 
                 className='w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-border'
               />
@@ -613,7 +613,7 @@ export default function App(){
           projectImage = firstItem.poster || firstItem.src;
         }
         if (!projectImage) {
-          projectImage = '/profile/profile.png';
+          projectImage = '/profile/profile.jpg';
         }
         
         const projectDescription = project.description || `${project.title} - ${project.jobTitle || 'Project'}`;

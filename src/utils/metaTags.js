@@ -3,10 +3,10 @@
  * Supports Open Graph and Twitter Card meta tags
  */
 
-const SITE_URL = 'https://stevennassef.com';
+const SITE_URL = 'https://www.stevennassef.com';
 const SITE_NAME = 'Steven Henry — Portfolio';
 const DEFAULT_DESCRIPTION = 'Senior Unity Engineer — gameplay systems, live‑ops, and high‑performance mobile experiences.';
-const DEFAULT_IMAGE = `${SITE_URL}/profile/profile.png`;
+const DEFAULT_IMAGE = `${SITE_URL}/profile/profile.jpg`;
 
 /**
  * Updates or creates a meta tag in the document head
