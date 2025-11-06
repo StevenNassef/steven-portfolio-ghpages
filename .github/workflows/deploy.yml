@@ -22,11 +22,10 @@ jobs:
       - run: npm run build
         env:
           BASE_PATH: '/${{ github.event.repository.name }}/'
-          # Set VITE_MEDIA_BASE_URL in GitHub: Settings → Secrets and variables → Actions → Variables tab
+          # Environment variables from GitHub: Settings → Secrets and variables → Actions → Variables tab
           # Or set in github-pages environment: Settings → Environments → github-pages → Environment variables
-          # If variable doesn't exist, uses default jsDelivr CDN URL
-          # Priority: environment vars → repository vars → default
-          VITE_MEDIA_BASE_URL: ${{ vars.VITE_MEDIA_BASE_URL || 'https://cdn.jsdelivr.net/gh/StevenNassef/steven-portfolio-ghpages@main/public/' }}
+          VITE_MEDIA_BASE_URL: ${{ vars.VITE_MEDIA_BASE_URL }}
+          VITE_CV_URL: ${{ vars.VITE_CV_URL }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { Github, Linkedin, Mail, Download, Gamepad2, Wrench, Cpu, Rocket, Clock, Users, Smartphone, ExternalLink } from 'lucide-react'
 import { projects } from './projectsData.js'
 import MediaCarousel from "./components/MediaCarousel.jsx";
-import { getMediaUrl } from './config.js';
+import { getMediaUrl, getCvUrl } from './config.js';
 
 const Badge = ({children}) => <span className='badge'>{children}</span>
 const Card = ({children, className = '', ...props}) => <div className={`card ${className}`} {...props}>{children}</div>
@@ -115,10 +115,13 @@ function Home({ onOpenProject }) {
               {['Unity','C#','DOTS','Netcode for Entities','Firebase','Adjust','AppsFlyer','PlayFab','Jenkins CI'].map((t,i)=>(<Badge key={i}>{t}</Badge>))}
             </div>
           </div>
-          <div className='flex gap-2'>
-            <a className='btn btn-outline' href='mailto:stevennassef97@gmail.com'><Mail className='h-4 w-4'/> Contact</a>
+          <div className='flex flex-wrap gap-3'>
+            <a className='btn btn-primary' href='mailto:stevennassef97@gmail.com'><Mail className='h-4 w-4'/> Contact</a>
             <a className='btn btn-outline' href='https://github.com/StevenNassef' target='_blank' rel='noreferrer'><Github className='h-4 w-4'/> GitHub</a>
-            <a className='btn btn-primary' href='https://www.linkedin.com/in/steven-nassef-henry-192366227/' target='_blank' rel='noreferrer'><Linkedin className='h-4 w-4'/> LinkedIn</a>
+            <a className='btn btn-outline' href='https://www.linkedin.com/in/steven-nassef-henry-192366227/' target='_blank' rel='noreferrer'><Linkedin className='h-4 w-4'/> LinkedIn</a>
+            {getCvUrl() && (
+              <a className='btn btn-outline' href={getCvUrl()} target='_blank' rel='noreferrer' download><Download className='h-4 w-4'/> Resume</a>
+            )}
           </div>
         </div>
       </header>
@@ -235,12 +238,14 @@ function Home({ onOpenProject }) {
         </div>
       </Section>
 
-      <Section id='contact' title='Let’s work together' subtitle='Open to Senior/Lead Unity roles — remote or on‑site.'>
+      <Section id='contact' title="Let's work together" subtitle='Open to Senior/Lead Unity roles — remote or on‑site.'>
         <div className='flex flex-wrap gap-3'>
           <a className='btn btn-primary' href='mailto:stevennassef97@gmail.com'><Mail className='h-4 w-4'/> Email me</a>
           <a className='btn btn-outline' href='https://www.linkedin.com/in/steven-nassef-henry-192366227/' target='_blank' rel='noreferrer'><Linkedin className='h-4 w-4'/> Connect on LinkedIn</a>
           <a className='btn btn-outline' href='https://github.com/StevenNassef' target='_blank' rel='noreferrer'><Github className='h-4 w-4'/> View GitHub</a>
-          <a className='btn btn-outline' href='#' onClick={(e)=> e.preventDefault()}><Download className='h-4 w-4'/> Download Resume (PDF)</a>
+          {getCvUrl() && (
+            <a className='btn btn-outline' href={getCvUrl()} target='_blank' rel='noreferrer' download><Download className='h-4 w-4'/> Download Resume (PDF)</a>
+          )}
         </div>
       </Section>
 
