@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { Github, Linkedin, Mail, Download, Gamepad2, Wrench, Cpu, Rocket, Clock, Users } from 'lucide-react'
+import { Github, Linkedin, Mail, Download, Gamepad2, Wrench, Cpu, Rocket, Clock, Users, Smartphone, ExternalLink } from 'lucide-react'
 import { projects } from './projectsData.js'
 import MediaCarousel from "./components/MediaCarousel.jsx";
 import { getMediaUrl } from './config.js';
@@ -9,6 +9,72 @@ const Card = ({children, className = '', ...props}) => <div className={`card ${c
 const CardHeader = ({children}) => <div className='card-header'>{children}</div>
 const CardTitle = ({children}) => <div className='card-title'>{children}</div>
 const CardContent = ({children}) => <div className='card-content'>{children}</div>
+
+// Platform icon mapping with actual logos
+const PlatformIcon = ({ platform, url, size = 'md' }) => {
+  const platformConfig = {
+    appStore: { 
+      label: 'App Store',
+      tooltip: 'View on App Store',
+      iconUrl: 'https://cdn.simpleicons.org/appstore/007AFF',
+      bgColor: 'hover:bg-blue-50 dark:hover:bg-blue-950/20'
+    },
+    playStore: { 
+      label: 'Google Play',
+      tooltip: 'View on Google Play',
+      iconUrl: 'https://cdn.simpleicons.org/googleplay/0F9D58',
+      bgColor: 'hover:bg-green-50 dark:hover:bg-green-950/20'
+    },
+    steam: { 
+      label: 'Steam',
+      tooltip: 'View on Steam',
+      iconUrl: 'https://cdn.simpleicons.org/steam/0099FF',
+      bgColor: 'hover:bg-blue-50 dark:hover:bg-blue-950/20'
+    },
+    itch: { 
+      label: 'itch.io',
+      tooltip: 'View on itch.io',
+      iconUrl: 'https://cdn.simpleicons.org/itchdotio/FA5C5C',
+      bgColor: 'hover:bg-red-50 dark:hover:bg-red-950/20'
+    },
+    github: { 
+      label: 'GitHub',
+      tooltip: 'View on GitHub',
+      iconUrl: 'https://cdn.simpleicons.org/github/FFFFFF',
+      bgColor: 'hover:bg-gray-50 dark:hover:bg-gray-900/20'
+    },
+  };
+
+  const config = platformConfig[platform];
+  if (!config || !url) return null;
+
+  const iconSize = size === 'sm' ? 'h-4 w-4' : size === 'lg' ? 'h-6 w-6' : 'h-5 w-5';
+  const containerSize = size === 'sm' ? 'p-1.5' : size === 'lg' ? 'p-3' : 'p-2.5';
+  
+  return (
+    <div className="relative group">
+      <a
+        href={url}
+        target='_blank'
+        rel='noreferrer'
+        className={`inline-flex items-center justify-center ${containerSize} rounded-lg border border-border ${config.bgColor} transition-all hover:scale-110`}
+        aria-label={`${config.label} - Opens in new tab`}
+      >
+        <img 
+          src={config.iconUrl} 
+          alt={config.label}
+          className={`${iconSize} object-contain`}
+          loading="lazy"
+        />
+      </a>
+      {/* Tooltip */}
+      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2.5 py-1.5 text-xs font-medium text-white bg-gray-900 dark:bg-gray-800 rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
+        {config.tooltip}
+        <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-900 dark:border-t-gray-800"></div>
+      </div>
+    </div>
+  );
+};
 
 const Section = ({id, title, subtitle, children}) => (
   <section id={id} className='section'>
@@ -121,6 +187,15 @@ function Home({ onOpenProject }) {
                     </div>
                   )}
                 </div>
+                {p.links && (p.links.appStore || p.links.playStore || p.links.steam || p.links.itch || p.links.github) && (
+                  <div className='flex flex-wrap items-center gap-2 mt-3'>
+                    <PlatformIcon platform="appStore" url={p.links.appStore} size="sm" />
+                    <PlatformIcon platform="playStore" url={p.links.playStore} size="sm" />
+                    <PlatformIcon platform="steam" url={p.links.steam} size="sm" />
+                    <PlatformIcon platform="itch" url={p.links.itch} size="sm" />
+                    <PlatformIcon platform="github" url={p.links.github} size="sm" />
+                  </div>
+                )}
               </CardHeader>
               <CardContent>
                 <MediaCarousel
@@ -270,28 +345,18 @@ function ProjectDetail({ projectKey, onBack }) {
 
         {(p.links || p.metrics) && (
           <div className='grid md:grid-cols-2 gap-6'>
-            {p.links && (p.links.appStore || p.links.playStore || p.links.github) && (
+            {p.links && (p.links.appStore || p.links.playStore || p.links.steam || p.links.itch || p.links.github) && (
               <Card>
                 <CardHeader>
                   <CardTitle>Links</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className='flex flex-col gap-2'>
-                    {p.links.appStore && (
-                      <a href={p.links.appStore} target='_blank' rel='noreferrer' className='btn btn-outline text-sm'>
-                        App Store
-                      </a>
-                    )}
-                    {p.links.playStore && (
-                      <a href={p.links.playStore} target='_blank' rel='noreferrer' className='btn btn-outline text-sm'>
-                        Google Play
-                      </a>
-                    )}
-                    {p.links.github && (
-                      <a href={p.links.github} target='_blank' rel='noreferrer' className='btn btn-outline text-sm'>
-                        GitHub
-                      </a>
-                    )}
+                  <div className='flex flex-wrap gap-2'>
+                    <PlatformIcon platform="appStore" url={p.links.appStore} size="md" />
+                    <PlatformIcon platform="playStore" url={p.links.playStore} size="md" />
+                    <PlatformIcon platform="steam" url={p.links.steam} size="md" />
+                    <PlatformIcon platform="itch" url={p.links.itch} size="md" />
+                    <PlatformIcon platform="github" url={p.links.github} size="md" />
                   </div>
                 </CardContent>
               </Card>

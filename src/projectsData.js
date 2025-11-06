@@ -85,8 +85,8 @@ export const projects = [
             "Designed scalable progression system that maintains player engagement.",
         ],
         links: {
-            // appStore: "https://apps.apple.com/...",
-            // playStore: "https://play.google.com/...",
+            appStore: "https://apps.apple.com/app/id6466821053",
+            playStore: "https://play.google.com/store/apps/details?id=com.UMAMI.Kortifo",
             // github: "https://github.com/...",
         },
         metrics: {
@@ -150,7 +150,10 @@ export const projects = [
         links: {
             // appStore: "https://apps.apple.com/...",
             // playStore: "https://play.google.com/...",
-        },
+            // steam: "https://store.steampowered.com/...",
+            // itch: "https://...itch.io/...",
+            // github: "https://github.com/...",
+          }
     },
     {
         key: "coin_forge",
@@ -207,7 +210,7 @@ export const projects = [
             "Integrated multiple analytics SDKs (Firebase, Adjust) for comprehensive tracking.",
         ],
         links: {
-            // appStore: "https://apps.apple.com/...",
+            appStore: "https://apps.apple.com/us/app/rent-lord/id1530679994",
             // playStore: "https://play.google.com/...",
         },
     },
