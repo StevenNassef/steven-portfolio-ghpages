@@ -65,6 +65,8 @@ export const projects = [
         title: "Kortifo",
         role: "Solo Developer",
         ...generateMediaPaths("kortifo", { maxImages: 16, extensions: ['.PNG'] }),
+        aspectRatio: "9 / 19.5",
+        itemsPerView: 3,
         bullets: [
             "Add your project description here.",
             "Add more bullet points as needed.",
@@ -76,6 +78,8 @@ export const projects = [
         title: "The Second Time Aliens Invaded Cairo",
         role: "Solo Developer",
         ...generateMediaPaths("cairo_invaiders", { maxImages: 16, extensions: ['.PNG'] }),
+        aspectRatio: "16 / 9",
+        itemsPerView: 1,
         bullets: [
             "Fast, responsive gameplay with touch controls.",
             "Content pipeline for levels & enemy waves.",
@@ -87,6 +91,8 @@ export const projects = [
         title: "Zarzura",
         role: "Solo Developer",
         ...generateMediaPaths("zarzura"),
+        aspectRatio: "9 / 19.5",
+        itemsPerView: 3,
         bullets: [
             "Fast, responsive gameplay with touch controls.",
             "Content pipeline for levels & enemy waves.",
@@ -98,6 +104,8 @@ export const projects = [
         title: "Jumpy Shooter",
         role: "Solo Developer",
         ...generateMediaPaths("jumpy_shooter"),
+        aspectRatio: "9 / 19.5",
+        itemsPerView: 3,
         bullets: [
             "Fast, responsive gameplay with touch controls.",
             "Content pipeline for levels & enemy waves.",
@@ -109,6 +117,8 @@ export const projects = [
         title: "Rent Lord",
         role: "Solo Developer",
         ...generateMediaPaths("rent_lord"),
+        aspectRatio: "9 / 19.5",
+        itemsPerView: 3,
         bullets: [
             "Economy systems with daily/weekly events.",
             "Live-ops hooks & telemetry.",
@@ -120,6 +130,8 @@ export const projects = [
         title: "Rocket Factory",
         role: "Solo Developer",
         ...generateMediaPaths("rocket_factory"),
+        aspectRatio: "9 / 19.5",
+        itemsPerView: 3,
         bullets: [
             "Physics-driven assembly gameplay.",
             "Optimized asset pipeline for mobile.",
@@ -131,6 +143,8 @@ export const projects = [
         title: "Coin Forge",
         role: "Solo Developer",
         ...generateMediaPaths("coin_forge"),
+        aspectRatio: "9 / 19.5",
+        itemsPerView: 3,
         bullets: [
             "Incremental mechanics & balancing tools.",
             "Store submission, analytics, and updates.",

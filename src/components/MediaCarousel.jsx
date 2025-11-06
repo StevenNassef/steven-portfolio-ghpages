@@ -1,83 +1,15 @@
 // src/components/MediaCarousel.jsx
 import React, { useMemo, useRef, useState, useEffect } from "react";
 
-/** Parse "16 / 9" -> number (w/h) */
-function parseAspect(aspect) {
-    if (typeof aspect === "number") return aspect;
-    const [w, h] = String(aspect || "").split("/").map(s => Number(s.trim()));
-    return Number.isFinite(w) && Number.isFinite(h) && h !== 0 ? w / h : 16 / 9;
-}
-
-function FitImage({ src, alt, targetAR, onDetectAR, isWide = false, onError }) {
-    const [contain, setContain] = useState(false);
-    return (
-        <img
-            src={src}
-            alt={alt}
-            loading="lazy"
-            onLoad={(e) => {
-                const img = e.currentTarget;
-                const ar = (img.naturalWidth || 0) / (img.naturalHeight || 1);
-                onDetectAR?.(ar);
-                // Narrow images should always use contain to fit within rounded frame
-                setContain(!isWide || ar < targetAR);
-            }}
-            onError={(e) => {
-                // Hide image if it fails to load
-                e.currentTarget.style.display = 'none';
-                onError?.(src);
-            }}
-            className={`w-full h-full ${(!isWide || contain) ? "object-contain" : "object-cover"} object-center`}
-            style={{ objectFit: (!isWide || contain) ? "contain" : "cover" }}
-        />
-    );
-}
-
-function FitVideo({ src, poster, targetAR, onDetectAR, isWide = false, onError }) {
-    const [contain, setContain] = useState(false);
-    return (
-        <video
-            src={src}
-            poster={poster || undefined}
-            controls
-            playsInline
-            muted
-            autoPlay
-            loop
-            preload="metadata"
-            onLoadedMetadata={(e) => {
-                const v = e.currentTarget;
-                const ar = (v.videoWidth || 0) / (v.videoHeight || 1);
-                onDetectAR?.(ar);
-                // Narrow images should always use contain to fit within rounded frame
-                setContain(!isWide || ar < targetAR);
-            }}
-            onError={(e) => {
-                // Hide video if it fails to load
-                e.currentTarget.style.display = 'none';
-                onError?.(src);
-            }}
-            className={`w-full h-full ${(!isWide || contain) ? "object-contain" : "object-cover"} object-center`}
-            style={{ objectFit: (!isWide || contain) ? "contain" : "cover" }}
-        />
-    );
-}
-
-/**
- * Carousel scrolls smoothly between images:
- * - wide images => full width (1 per snap)
- * - narrow images => 1/3 width (3 per snap)
- */
 export default function MediaCarousel({
-                                          title,
-                                          main,
-                                          gallery = [],
-                                          aspect = "16 / 9",
-                                          showDots = true,
-                                          showArrows = true,
-                                      }) {
-    const targetAR = useMemo(() => parseAspect(aspect), [aspect]);
-
+    title,
+    main,
+    gallery = [],
+    aspect = "16 / 9",
+    itemsPerView = 1,
+    showDots = true,
+    showArrows = true,
+}) {
     // Track which media files failed to load
     const [failedMedia, setFailedMedia] = useState(new Set());
 
@@ -89,9 +21,13 @@ export default function MediaCarousel({
             const src = g.src;
             // Skip if we know this media failed to load
             if (failedMedia.has(src)) continue;
-            items.push({ type: g.type === "video" ? "video" : "image", src: g.src, poster: g.poster });
+            items.push({ 
+                type: g.type === "video" ? "video" : "image", 
+                src: g.src, 
+                poster: g.poster 
+            });
         }
-        return items.length ? items : [];
+        return items;
     }, [gallery, failedMedia]);
 
     // Handler to mark media as failed
@@ -104,195 +40,126 @@ export default function MediaCarousel({
     };
 
     const trackRef = useRef(null);
-    const itemRefs = useRef({});
-    const [containerW, setContainerW] = useState(0);
-    const [ratios, setRatios] = useState({});
-    const [itemWidths, setItemWidths] = useState({});
-    const onAR = (i, r) => setRatios(prev => (prev[i] === r ? prev : { ...prev, [i]: r }));
-
-    // Measure container width (for 16:9 height)
-    useEffect(() => {
-        const el = trackRef.current;
-        if (!el) return;
-        const update = () => setContainerW(el.clientWidth || 1);
-        update();
-        const ro = new ResizeObserver(update);
-        ro.observe(el);
-        window.addEventListener("resize", update);
-        return () => {
-            window.removeEventListener("resize", update);
-            ro.disconnect();
-        };
-    }, []);
-
-    // Measure item widths after they're rendered
-    useEffect(() => {
-        const updateWidths = () => {
-            const widths = {};
-            Object.entries(itemRefs.current).forEach(([i, el]) => {
-                if (el) widths[i] = el.offsetWidth || 0;
-            });
-            setItemWidths(widths);
-        };
-        updateWidths();
-        const ro = new ResizeObserver(updateWidths);
-        Object.values(itemRefs.current).forEach(el => {
-            if (el) ro.observe(el);
-        });
-        return () => ro.disconnect();
-    }, [slides.length]);
-
-    const isHintWide = (src, idx) =>
-        idx === 0 || /(^|\/)[^/]*(_|-)?main\.[a-z0-9]+$/i.test(src || "");
-    const isWideAR = (ar) => ar && ar >= (16 / 9) * 0.975; // ~2.5% tolerance
-
-    // Determine if each slide is wide or narrow
-    const slideConfigs = useMemo(() => {
-        return slides.map((s, i) => {
-            const isVideo = s.type === "video";
-            // Videos default to narrow (vertical), only become wide if aspect ratio is detected as wide
-            // Images are wide if they match the hint or have a wide aspect ratio
-            const wide = isVideo 
-                ? isWideAR(ratios[i])  // Videos: only wide if aspect ratio is detected and wide
-                : (isHintWide(s.src, i) || isWideAR(ratios[i]));  // Images: hint or wide aspect ratio
-            return {
-                ...s,
-                index: i,
-                ar: ratios[i],
-                isWide: wide,
-            };
-        });
-    }, [slides, ratios]);
-
-    const gap = 20; // gap in pixels
-    const frameH = Math.round(((containerW - 2 * gap) / 3) * (19.5 / 9));
-    const thirdBasis = `calc((100% - ${2 * gap}px) / 3)`;
-
-    // Calculate scroll positions for each item
-    const scrollPositions = useMemo(() => {
-        const positions = [];
-        let currentPos = 0;
-        
-        slideConfigs.forEach((slide, i) => {
-            positions.push(currentPos);
-            const width = itemWidths[i] || (slide.isWide ? containerW : (containerW - 2 * gap) / 3);
-            currentPos += width + gap;
-        });
-        
-        return positions;
-    }, [slideConfigs, itemWidths, containerW, gap]);
-
-    // Track active item based on scroll position
     const [activeIndex, setActiveIndex] = useState(0);
-    
+    const gapPercent = 2; // gap between items as percentage (2%)
+
+    // Calculate number of pages (groups of itemsPerView)
+    const totalPages = Math.ceil(slides.length / itemsPerView);
+
+    // Calculate item width based on itemsPerView
+    // With CSS gap, items don't need to account for gap in their width
+    // gap is applied separately, so we just divide by itemsPerView
+    // But we need to account for gap taking up space, so:
+    // Available width = 100% - ((itemsPerView - 1) * gap%)
+    // Item width = Available width / itemsPerView
+    const itemWidthPercent = itemsPerView === 1 
+        ? 100 
+        : (100 - (itemsPerView - 1) * gapPercent) / itemsPerView;
+
+    // Track active page based on scroll position
     useEffect(() => {
         const el = trackRef.current;
-        if (!el) return;
+        if (!el || slides.length === 0) return;
+        
         const onScroll = () => {
             const scrollLeft = el.scrollLeft;
-            // Find the closest item
-            let closestIdx = 0;
-            let minDist = Infinity;
-            scrollPositions.forEach((pos, i) => {
-                const dist = Math.abs(scrollLeft - pos);
-                if (dist < minDist) {
-                    minDist = dist;
-                    closestIdx = i;
-                }
-            });
-            setActiveIndex(closestIdx);
+            const containerWidth = el.clientWidth;
+            // Page width is the container width (one page = itemsPerView items)
+            const pageWidth = containerWidth;
+            const currentPage = Math.round(scrollLeft / pageWidth);
+            setActiveIndex(Math.min(Math.max(currentPage, 0), totalPages - 1));
         };
+        
         el.addEventListener("scroll", onScroll, { passive: true });
+        onScroll(); // Initial check
         return () => el.removeEventListener("scroll", onScroll);
-    }, [scrollPositions]);
+    }, [slides.length, totalPages]);
 
     const gotoItem = (direction) => {
         const el = trackRef.current;
-        if (!el || scrollPositions.length === 0) return;
+        if (!el || slides.length === 0) return;
         
-        const currentScroll = el.scrollLeft;
         const containerWidth = el.clientWidth;
+        const pageWidth = containerWidth;
+        const currentPage = Math.round(el.scrollLeft / pageWidth);
         
         if (direction === 'next') {
-            // Find next item that's not fully visible
-            for (let i = 0; i < scrollPositions.length; i++) {
-                if (scrollPositions[i] > currentScroll + containerWidth * 0.1) {
-                    el.scrollTo({ left: scrollPositions[i], behavior: "smooth" });
-                    return;
-                }
-            }
-            // If at end, just scroll a bit more
-            el.scrollTo({ left: el.scrollWidth - containerWidth, behavior: "smooth" });
+            const nextPage = Math.min(currentPage + 1, totalPages - 1);
+            el.scrollTo({ left: nextPage * pageWidth, behavior: "smooth" });
         } else {
-            // Find previous item
-            for (let i = scrollPositions.length - 1; i >= 0; i--) {
-                if (scrollPositions[i] < currentScroll - containerWidth * 0.1) {
-                    el.scrollTo({ left: scrollPositions[i], behavior: "smooth" });
-                    return;
-                }
-            }
-            // If at start, go to beginning
-            el.scrollTo({ left: 0, behavior: "smooth" });
+            const prevPage = Math.max(currentPage - 1, 0);
+            el.scrollTo({ left: prevPage * pageWidth, behavior: "smooth" });
         }
     };
 
+    const goToSlide = (pageIndex) => {
+        const el = trackRef.current;
+        if (!el) return;
+        const containerWidth = el.clientWidth;
+        const pageWidth = containerWidth;
+        el.scrollTo({ left: pageIndex * pageWidth, behavior: "smooth" });
+    };
+
+    if (slides.length === 0) return null;
 
     return (
-        <div className="relative group">
+        <div className="relative group w-full">
             <div
                 ref={trackRef}
                 className="carousel hide-scrollbar"
                 style={{ 
                     scrollSnapType: "x mandatory",
-                    gap: `${gap}px`
+                    gap: itemsPerView > 1 ? `${gapPercent}%` : "0",
                 }}
                 aria-roledescription="carousel"
                 aria-label={`${title} media`}
             >
-                {slideConfigs.map((slide, i) => {
-                    const isWide = slide.isWide;
-                    const isVideo = slide.type === "video";
+                {slides.map((slide, i) => {
                     const isFailed = failedMedia.has(slide.src);
                     
                     // Skip rendering if this media failed to load
                     if (isFailed) return null;
                     
+                    // Determine if this item should snap (first item of each page)
+                    const isFirstInPage = i % itemsPerView === 0;
+                    
                     return (
                         <div
                             key={`${slide.src}-${i}`}
-                            ref={(el) => { itemRefs.current[i] = el; }}
                             className="media bg-card"
                             style={{
-                                scrollSnapAlign: "start",
+                                scrollSnapAlign: isFirstInPage ? "start" : "none",
                                 flexShrink: 0,
-                                width: isWide ? "100%" : thirdBasis,
-                                minWidth: isWide ? "100%" : thirdBasis,
-                                aspectRatio: isWide ? "16 / 9" : undefined,
-                                height: isWide ? undefined : `${frameH}px`,
-                                // Only make narrow videos sticky (vertical videos stay on left)
-                                // Wide videos (horizontal) scroll normally like wide images
-                                position: (isVideo && !isWide) ? "sticky" : "relative",
-                                left: (isVideo && !isWide) ? 0 : "auto",
-                                zIndex: (isVideo && !isWide) ? 10 : "auto",
+                                width: `${itemWidthPercent}%`,
+                                aspectRatio: aspect,
                             }}
                         >
                             {slide.type === "video" ? (
-                                <FitVideo
+                                <video
                                     src={slide.src}
-                                    poster={slide.poster}
-                                    targetAR={16 / 9}
-                                    onDetectAR={(r) => onAR(i, r)}
-                                    isWide={isWide}
-                                    onError={() => handleMediaError(slide.src)}
+                                    poster={slide.poster || undefined}
+                                    controls
+                                    playsInline
+                                    muted
+                                    autoPlay
+                                    loop
+                                    preload="metadata"
+                                    onError={(e) => {
+                                        e.currentTarget.style.display = 'none';
+                                        handleMediaError(slide.src);
+                                    }}
+                                    className="w-full h-full object-cover"
                                 />
                             ) : (
-                                <FitImage
+                                <img
                                     src={slide.src}
-                                    alt={`${title} ${isWide ? 'cover' : `screenshot ${i + 1}`}`}
-                                    targetAR={16 / 9}
-                                    onDetectAR={(r) => onAR(i, r)}
-                                    isWide={isWide}
-                                    onError={() => handleMediaError(slide.src)}
+                                    alt={`${title} ${i + 1}`}
+                                    loading="lazy"
+                                    onError={(e) => {
+                                        e.currentTarget.style.display = 'none';
+                                        handleMediaError(slide.src);
+                                    }}
+                                    className="w-full h-full object-cover"
                                 />
                             )}
                         </div>
@@ -300,7 +167,7 @@ export default function MediaCarousel({
                 })}
             </div>
 
-            {showArrows && slideConfigs.length > 1 && (
+            {showArrows && totalPages > 1 && (
                 <>
                     <button
                         type="button"
@@ -310,6 +177,7 @@ export default function MediaCarousel({
                             gotoItem('prev');
                         }}
                         className="btn-circle left-2"
+                        disabled={activeIndex === 0}
                     >
                         ‹
                     </button>
@@ -321,27 +189,25 @@ export default function MediaCarousel({
                             gotoItem('next');
                         }}
                         className="btn-circle right-2"
+                        disabled={activeIndex === totalPages - 1}
                     >
                         ›
                     </button>
                 </>
             )}
 
-            {showDots && slideConfigs.length > 1 && (
+            {showDots && totalPages > 1 && (
                 <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-2">
-                    {slideConfigs.map((_, i) => (
+                    {Array.from({ length: totalPages }).map((_, i) => (
                         <button
                             key={i}
                             type="button"
-                            aria-label={`Go to item ${i + 1}`}
+                            aria-label={`Go to page ${i + 1}`}
                             onClick={(e) => {
                                 e.stopPropagation();
-                                const el = trackRef.current;
-                                if (el && scrollPositions[i] !== undefined) {
-                                    el.scrollTo({ left: scrollPositions[i], behavior: "smooth" });
-                                }
+                                goToSlide(i);
                             }}
-                            className={`h-2 w-2 rounded-full ${
+                            className={`h-2 w-2 rounded-full transition-colors ${
                                 i === activeIndex ? "bg-white/90" : "bg-white/40"
                             }`}
                         />

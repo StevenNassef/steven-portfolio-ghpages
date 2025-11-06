@@ -122,7 +122,7 @@ function Home({ onOpenProject }) {
 
       <Section id='projects' title='Selected Projects'>
         <div className='grid md:grid-cols-2 gap-6'>
-          {projects.filter(p => p.key !== 'mergdom').map(p => (
+          {projects.map(p => (
             <Card
               key={p.key}
               onClick={() => onOpenProject(p.key)}
@@ -137,7 +137,8 @@ function Home({ onOpenProject }) {
                   title={p.title}
                   main={p.main}
                   gallery={p.gallery}
-                  aspect="16 / 9"   // iPhone 13 Pro Max landscape
+                  aspect={p.aspectRatio}  // iPhone 13 Pro Max landscape
+                  itemsPerView={p.itemsPerView}
                 />
 
                 <ul className='list-disc pl-5 space-y-1 text-sm mt-4'>
@@ -204,7 +205,13 @@ function ProjectDetail({ projectKey, onBack }) {
         </div>
 
         <div className='mt-8 mb-8'>
-          <MediaCarousel title={p.title} main={p.main} gallery={p.gallery} aspect="16 / 9" />
+          <MediaCarousel 
+            title={p.title} 
+            main={p.main} 
+            gallery={p.gallery} 
+            aspect={p.aspectRatio || "16 / 9"}
+            itemsPerView={p.itemsPerView || 1}
+          />
         </div>
 
         <Card className='mb-6'>
