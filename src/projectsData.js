@@ -71,6 +71,7 @@ export const projects = [
         timeline: "2023-2024",
         jobTitle: "Lead Game Programmer",
         teamSize: 4,
+        engine: "Unity",
         duration: "8 months",
         bullets: [
             "Card-based gameplay with strategic depth and progression systems.",
@@ -105,6 +106,7 @@ export const projects = [
         timeline: "2021-2022",
         jobTitle: "Lead Game Developer",
         teamSize: 1,
+        engine: "Unity",
         duration: "1 week",
         bullets: [
             "Fast, responsive gameplay with touch controls optimized for mobile.",
@@ -133,6 +135,7 @@ export const projects = [
         timeline: "2020-2021",
         jobTitle: "Lead Game Developer",
         teamSize: 1,
+        engine: "Unity",
         duration: "10 months",
         bullets: [
             "Word-trivia gameplay with extensive vocabulary database.",
@@ -161,6 +164,7 @@ export const projects = [
         timeline: "2022-2023",
         jobTitle: "Unity Game Developer",
         teamSize: 1,
+        engine: "Unity",
         duration: "3 weeks",
         bullets: [
             "Incremental mechanics & balancing tools for long-term player engagement.",
@@ -190,6 +194,7 @@ export const projects = [
         timeline: "2022-2023",
         jobTitle: "Unity Game Developer",
         teamSize: 1,
+        engine: "Unity",
         duration: "4 weeks",
         bullets: [
             "Complex economy systems with daily/weekly events and seasonal content.",
@@ -218,6 +223,7 @@ export const projects = [
         timeline: "2021-2022",
         jobTitle: "Unity Game Developer",
         teamSize: 1,
+        engine: "Unity",
         duration: "3 weeks",
         bullets: [
             "Physics-driven assembly gameplay with realistic component interactions.",
@@ -247,6 +253,7 @@ export const projects = [
         timeline: "2021-2022",
         jobTitle: "Unity Game Developer",
         teamSize: 1,
+        engine: "Unity",
         duration: "2 weeks",
         bullets: [
             "Fast, responsive gameplay with touch controls and intuitive jump mechanics.",

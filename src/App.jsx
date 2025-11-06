@@ -10,6 +10,41 @@ const CardHeader = ({children}) => <div className='card-header'>{children}</div>
 const CardTitle = ({children, className = ''}) => <div className={`card-title ${className}`}>{children}</div>
 const CardContent = ({children}) => <div className='card-content'>{children}</div>
 
+// Engine icon mapping with actual logos
+const EngineIcon = ({ engine, size = 'md' }) => {
+  const engineConfig = {
+    Unity: { 
+      label: 'Unity',
+      iconUrl: 'https://cdn.simpleicons.org/unity/888888',
+    },
+    Unreal: { 
+      label: 'Unreal Engine',
+      iconUrl: 'https://cdn.simpleicons.org/unrealengine/888888',
+    },
+    Godot: { 
+      label: 'Godot',
+      iconUrl: 'https://cdn.simpleicons.org/godotengine/888888',
+    },
+  };
+
+  const config = engineConfig[engine];
+  if (!config) return null;
+
+  const iconSize = size === 'sm' ? 'h-3.5 w-3.5' : size === 'lg' ? 'h-5 w-5' : 'h-4 w-4';
+  
+  return (
+    <div className="flex items-center gap-1.5">
+      <img 
+        src={config.iconUrl} 
+        alt={config.label}
+        className={`${iconSize} object-contain`}
+        loading="lazy"
+      />
+      <span>{config.label}</span>
+    </div>
+  );
+};
+
 // Platform icon mapping with actual logos
 const PlatformIcon = ({ platform, url, size = 'md' }) => {
   const platformConfig = {
@@ -178,6 +213,9 @@ function Home({ onOpenProject }) {
                 </div>
                 <div className='flex flex-wrap items-center justify-between gap-3 mt-2 text-sm text-muted'>
                   <div className='flex flex-wrap items-center gap-3'>
+                    {p.engine && (
+                      <EngineIcon engine={p.engine} size="sm" />
+                    )}
                     {p.duration && (
                       <div className='flex items-center gap-1.5'>
                         <Clock className='h-3.5 w-3.5' />
@@ -295,6 +333,11 @@ function ProjectDetail({ projectKey, onBack }) {
               <div className='flex items-center gap-1.5 text-sm text-muted'>
                 <Users className='h-4 w-4' />
                 <span>{p.teamSize} {p.teamSize === 1 ? 'person' : 'people'}</span>
+              </div>
+            )}
+            {p.engine && (
+              <div className='flex items-center gap-1.5 text-sm text-muted'>
+                <EngineIcon engine={p.engine} size="md" />
               </div>
             )}
           </div>
