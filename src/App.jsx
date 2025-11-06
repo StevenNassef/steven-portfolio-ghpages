@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { Github, Linkedin, Mail, Download, Gamepad2, Wrench, Cpu, Rocket } from 'lucide-react'
+import { Github, Linkedin, Mail, Download, Gamepad2, Wrench, Cpu, Rocket, Clock, Users } from 'lucide-react'
 import { projects } from './projectsData.js'
 import MediaCarousel from "./components/MediaCarousel.jsx";
 import { getMediaUrl } from './config.js';
@@ -99,7 +99,28 @@ function Home({ onOpenProject }) {
             >
               <CardHeader>
                 <CardTitle>{p.title}</CardTitle>
-                <div className='text-sm text-muted'>{p.role}</div>
+                <div className='flex flex-wrap items-center gap-2 text-sm text-muted'>
+                  {p.jobTitle && (
+                    <div>{p.jobTitle}</div>
+                  )}
+                  {p.role && (
+                    <div>• {p.role}</div>
+                  )}
+                </div>
+                <div className='flex flex-wrap items-center gap-3 mt-2 text-sm text-muted'>
+                  {p.duration && (
+                    <div className='flex items-center gap-1.5'>
+                      <Clock className='h-3.5 w-3.5' />
+                      <span>{p.duration}</span>
+                    </div>
+                  )}
+                  {p.teamSize && (
+                    <div className='flex items-center gap-1.5'>
+                      <Users className='h-3.5 w-3.5' />
+                      <span>{p.teamSize} {p.teamSize === 1 ? 'person' : 'people'}</span>
+                    </div>
+                  )}
+                </div>
               </CardHeader>
               <CardContent>
                 <MediaCarousel
@@ -170,7 +191,34 @@ function ProjectDetail({ projectKey, onBack }) {
       <div className='max-w-5xl mx-auto'>
         <div className='mb-8'>
           <h1 className='text-4xl sm:text-5xl font-extrabold tracking-tight'>{p.title}</h1>
-          <div className='text-lg text-muted mt-2'>{p.role}</div>
+          <div className='flex flex-wrap items-center gap-4 mt-2'>
+            {p.jobTitle && (
+              <div className='text-lg text-muted'>{p.jobTitle}</div>
+            )}
+            {p.role && (
+              <div className='text-sm text-muted'>• {p.role}</div>
+            )}
+            {p.timeline && (
+              <div className='text-sm text-muted'>• {p.timeline}</div>
+            )}
+          </div>
+          <div className='flex flex-wrap items-center gap-4 mt-2'>
+            {p.duration && (
+              <div className='flex items-center gap-1.5 text-sm text-muted'>
+                <Clock className='h-4 w-4' />
+                <span>{p.duration}</span>
+              </div>
+            )}
+            {p.teamSize && (
+              <div className='flex items-center gap-1.5 text-sm text-muted'>
+                <Users className='h-4 w-4' />
+                <span>{p.teamSize} {p.teamSize === 1 ? 'person' : 'people'}</span>
+              </div>
+            )}
+          </div>
+          {p.description && (
+            <p className='mt-4 text-muted max-w-3xl'>{p.description}</p>
+          )}
         </div>
 
         <div className='mt-8 mb-8'>
@@ -183,27 +231,97 @@ function ProjectDetail({ projectKey, onBack }) {
           />
         </div>
 
-        <Card className='mb-6'>
-          <CardHeader>
-            <CardTitle>Project Overview</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className='list-disc pl-5 space-y-2 text-sm'>
-              {p.bullets.map((b,i)=>(<li key={i}>{b}</li>))}
-            </ul>
-          </CardContent>
-        </Card>
+        <div className='grid md:grid-cols-2 gap-6 mb-6'>
+          <Card>
+            <CardHeader>
+              <CardTitle>Key Features</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul className='list-disc pl-5 space-y-2 text-sm'>
+                {p.bullets.map((b,i)=>(<li key={i}>{b}</li>))}
+              </ul>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Technologies & Tools</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className='flex flex-wrap gap-2'>
-              {p.stack.map((s,i)=>(<Badge key={i}>{s}</Badge>))}
-            </div>
-          </CardContent>
-        </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Technologies & Tools</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className='flex flex-wrap gap-2'>
+                {p.stack.map((s,i)=>(<Badge key={i}>{s}</Badge>))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {p.challenges && p.challenges.length > 0 && (
+          <Card className='mb-6'>
+            <CardHeader>
+              <CardTitle>Technical Challenges & Solutions</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul className='list-disc pl-5 space-y-2 text-sm'>
+                {p.challenges.map((c,i)=>(<li key={i}>{c}</li>))}
+              </ul>
+            </CardContent>
+          </Card>
+        )}
+
+        {(p.links || p.metrics) && (
+          <div className='grid md:grid-cols-2 gap-6'>
+            {p.links && (p.links.appStore || p.links.playStore || p.links.github) && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Links</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className='flex flex-col gap-2'>
+                    {p.links.appStore && (
+                      <a href={p.links.appStore} target='_blank' rel='noreferrer' className='btn btn-outline text-sm'>
+                        App Store
+                      </a>
+                    )}
+                    {p.links.playStore && (
+                      <a href={p.links.playStore} target='_blank' rel='noreferrer' className='btn btn-outline text-sm'>
+                        Google Play
+                      </a>
+                    )}
+                    {p.links.github && (
+                      <a href={p.links.github} target='_blank' rel='noreferrer' className='btn btn-outline text-sm'>
+                        GitHub
+                      </a>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {p.metrics && (p.metrics.downloads || p.metrics.rating) && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Metrics</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className='space-y-2 text-sm'>
+                    {p.metrics.downloads && (
+                      <div>
+                        <span className='font-medium'>Downloads: </span>
+                        <span className='text-muted'>{p.metrics.downloads}</span>
+                      </div>
+                    )}
+                    {p.metrics.rating && (
+                      <div>
+                        <span className='font-medium'>Rating: </span>
+                        <span className='text-muted'>{p.metrics.rating} ⭐</span>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
