@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { Github, Linkedin, Mail, Download, Gamepad2, Wrench, Cpu, Rocket, Clock, Users, Smartphone, ExternalLink } from 'lucide-react'
-import { projects } from './projectsData.js'
+import { projects, experiences, companyConfig } from './projectsData.js'
 import MediaCarousel from "./components/MediaCarousel.jsx";
 import { getMediaUrl, getCvUrl } from './config.js';
 
@@ -41,6 +41,157 @@ const EngineIcon = ({ engine, size = 'md' }) => {
         loading="lazy"
       />
       <span>{config.label}</span>
+    </div>
+  );
+};
+
+// Helper function to decode HTML entities
+const decodeHtmlEntities = (str) => {
+  const textarea = document.createElement('textarea');
+  textarea.innerHTML = str;
+  return textarea.value;
+};
+
+// Helper function to clean and decode logo URL
+const cleanLogoUrl = (url) => {
+  if (!url) return null;
+  try {
+    let cleaned = decodeHtmlEntities(url);
+    cleaned = decodeURIComponent(cleaned);
+    cleaned = cleaned.replace(/&amp;/g, '&');
+    return cleaned;
+  } catch {
+    return url.replace(/&amp;/g, '&');
+  }
+};
+
+// Helper function to extract LinkedIn company logo URL
+const extractLinkedInLogo = async (linkedinUrl) => {
+  if (!linkedinUrl) return null;
+  
+  try {
+    const proxies = [
+      `https://api.allorigins.win/raw?url=${encodeURIComponent(linkedinUrl)}`,
+      `https://corsproxy.io/?${encodeURIComponent(linkedinUrl)}`,
+      `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(linkedinUrl)}`,
+    ];
+    
+    let html = null;
+    for (const proxyUrl of proxies) {
+      try {
+        const response = await fetch(proxyUrl);
+        if (response.ok) {
+          html = await response.text();
+          break;
+        }
+      } catch {
+        continue;
+      }
+    }
+    
+    if (!html) return null;
+    
+    const logoPatterns = [
+      /<meta\s+property="og:image"\s+content="([^"]+)"/i,
+      /<meta\s+name="og:image"\s+content="([^"]+)"/i,
+      /<img[^>]*class="[^"]*org-top-card-primary-content__logo[^"]*"[^>]*src="([^"]+)"/i,
+      /<img[^>]*data-delayed-url="([^"]*media\.licdn\.com[^"]+)"/i,
+      /https:\/\/media\.licdn\.com\/dms\/image\/[^"'\s<>]+/i,
+    ];
+    
+    for (const pattern of logoPatterns) {
+      const match = html.match(pattern);
+      if (match) {
+        const logoUrl = match[1] || match[0];
+        if (logoUrl?.includes('media.licdn.com')) {
+          return cleanLogoUrl(logoUrl);
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Error extracting LinkedIn logo:', error);
+  }
+  
+  return null;
+};
+
+// Company icon mapping with actual logos
+const CompanyIcon = ({ company, size = 'md' }) => {
+  const [linkedinLogos, setLinkedinLogos] = React.useState({});
+  
+  const config = companyConfig[company];
+  if (!config) return null;
+  
+  // Resolve local icon URL using getMediaUrl
+  const localIcon = config.localIcon ? getMediaUrl(config.localIcon) : null;
+  
+  // Fetch LinkedIn logo if URL is provided and not already fetched
+  React.useEffect(() => {
+    if (config.linkedinUrl && !linkedinLogos[company]) {
+      extractLinkedInLogo(config.linkedinUrl).then(logoUrl => {
+        if (logoUrl) {
+          setLinkedinLogos(prev => ({ ...prev, [company]: logoUrl }));
+        }
+      });
+    }
+  }, [company, config.linkedinUrl, linkedinLogos]);
+  
+  const linkedinLogoUrl = linkedinLogos[company] || null;
+  
+  const iconSize = size === 'sm' ? 'h-6 w-6' : size === 'lg' ? 'h-10 w-10' : 'h-8 w-8';
+  
+  // Priority: linkedinLogoUrl > localIcon > iconUrl > clearbitLogo
+  const iconSrc = linkedinLogoUrl || localIcon || config.iconUrl || config.clearbitLogo;
+  
+  return (
+    <div className="flex items-center gap-2">
+      <div className={`${iconSize} rounded-lg overflow-hidden bg-white dark:bg-gray-800 border border-border flex items-center justify-center flex-shrink-0`}>
+        <img 
+          src={iconSrc} 
+          alt={config.label}
+          className={`${iconSize} object-cover`}
+          loading="lazy"
+        onError={(e) => {
+          const currentSrc = e.target.src;
+          const tried = (e.target.getAttribute('data-tried') || '').split(',').filter(Boolean);
+          
+          const urlMatches = (url1, url2) => {
+            if (!url1 || !url2) return false;
+            try {
+              return url1 === url2 || 
+                     decodeURIComponent(url1) === decodeURIComponent(url2) ||
+                     url1.includes(url2) || url2.includes(url1);
+            } catch {
+              return url1 === url2;
+            }
+          };
+          
+          // Define fallback sources in priority order
+          const fallbacks = [
+            { key: 'linkedin', url: linkedinLogoUrl },
+            { key: 'local', url: localIcon },
+            { key: 'icon', url: config.iconUrl },
+            { key: 'clearbit', url: config.clearbitLogo },
+          ].filter(f => f.url);
+          
+          // Find which source failed
+          const failedIndex = fallbacks.findIndex(f => urlMatches(currentSrc, f.url));
+          
+          if (failedIndex >= 0) {
+            // Try next available fallback
+            const nextFallback = fallbacks.find((f, idx) => idx > failedIndex && !tried.includes(f.key));
+            
+            if (nextFallback) {
+              e.target.src = nextFallback.url;
+              e.target.setAttribute('data-tried', [...tried, nextFallback.key].join(','));
+            } else if (tried.length >= fallbacks.length) {
+              // All options exhausted
+              e.target.style.display = 'none';
+            }
+          }
+        }}
+        />
+      </div>
     </div>
   );
 };
@@ -162,34 +313,30 @@ function Home({ onOpenProject }) {
       </header>
 
       <Section id='experience' title='Experience Snapshot' subtitle='Focused on shipping robust features, optimizing performance, and integrating growth/analytics SDKs at scale.'>
-        <div className='grid md:grid-cols-3 gap-4'>
-          <Card>
-            <CardHeader>
-              <CardTitle><Wrench className='h-5 w-5'/> Carry1st — Senior Unity Engineer</CardTitle>
-              <div className='text-sm text-muted'>2025</div>
-            </CardHeader>
-            <CardContent>
-              <p className='text-sm'><b>Mergedom: Home Design</b> — core gameplay systems, feature flags, IAP & live‑ops content tooling (e.g., Throwback Treasure, Chocolate Box), performance profiling, SDK integrations.</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle><Cpu className='h-5 w-5'/> Umami Games — Lead Game Programmer</CardTitle>
-              <div className='text-sm text-muted'>2023–2024</div>
-            </CardHeader>
-            <CardContent>
-              <p className='text-sm'>Architected core systems, rapid prototyping, led feature development and code reviews across multiple mobile titles.</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle><Rocket className='h-5 w-5'/> Yajulu & Solo Projects</CardTitle>
-              <div className='text-sm text-muted'>2019–2023</div>
-            </CardHeader>
-            <CardContent>
-              <p className='text-sm'><b>Zarzura</b> (word‑trivia), <b>Rocket Factory</b>, <b>Coin Forge</b>, <b>Rent Lord</b> — full lifecycle: design, implementation, launch, and updates.</p>
-            </CardContent>
-          </Card>
+        <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-4'>
+          {experiences.map((exp, index) => (
+            <Card key={index}>
+              <CardHeader className='pb-4'>
+                <CardTitle className='flex items-center gap-2.5 mb-2.5'>
+                  <CompanyIcon company={exp.company} size='lr' />
+                  <span>
+                    {exp.displayTitle || exp.company}
+                  </span>
+                </CardTitle>
+                <div className='flex flex-col gap-1 text-sm text-muted mt-1.5'>
+                  {exp.role && exp.role.trim() && (
+                    <div>{exp.role}</div>
+                  )}
+                  {exp.period && (
+                    <div>{exp.period}</div>
+                  )}
+                </div>
+              </CardHeader>
+              <CardContent className='pt-0 pb-6'>
+                <p className='text-sm leading-relaxed' dangerouslySetInnerHTML={{ __html: exp.description }} />
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </Section>
 

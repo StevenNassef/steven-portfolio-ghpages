@@ -273,3 +273,70 @@ export const projects = [
         },
     },
 ];
+
+/**
+ * Experience data for the Experience Snapshot section
+ * Each experience includes company, role, period, and description
+ */
+export const experiences = [
+    {
+        company: 'Carry1st',
+        role: 'Senior Unity Engineer',
+        period: '2025',
+        description: '<b>Mergedom: Home Design</b> — core gameplay systems, feature flags, IAP & live‑ops content tooling (e.g., Throwback Treasure, Chocolate Box), performance profiling, SDK integrations.',
+    },
+    {
+        company: 'Umami Games',
+        role: 'Lead Game Programmer',
+        period: '2023–2025',
+        description: '<b>Kortifo</b> — architected core systems, rapid prototyping, led feature development and code reviews. Card-based gameplay with strategic depth, custom UI framework, and cloud sync capabilities.',
+    },
+    {
+        company: 'Yajulu',
+        role: 'Lead Game Developer',
+        displayTitle: 'Yajulu',
+        period: '2021–2023',
+        description: '<b>Zarzura</b> (word‑trivia), <b>The Second Time Aliens Invaded Cairo</b> — full lifecycle: design, implementation, launch, and updates.',
+    },
+    {
+        company: 'Kob Games Studios',
+        role: 'Unity Game Developer',
+        period: '2020',
+        description: '<b>Coin Forge</b>, <b>Rent Lord</b>, <b>Rocket Factory</b>, <b>Jumpy Shooter</b> — incremental/idle mechanics, complex economy systems, live‑ops infrastructure, analytics integration, and full app store submission process.',
+    },
+];
+
+/**
+ * Company configuration for logos and icons
+ * Each company includes local icon path, LinkedIn URL, icon URL, and Clearbit logo
+ */
+export const companyConfig = {
+    'Carry1st': { 
+        label: 'Carry1st',
+        localIcon: '/company-icons/carry1st.png',
+        linkedinUrl: 'https://www.linkedin.com/company/carry1st/',
+        iconUrl: 'https://cdn.simpleicons.org/carry1st/000000',
+        clearbitLogo: 'https://logo.clearbit.com/carry1st.com',
+    },
+    'Umami Games': { 
+        label: 'Umami Games',
+        localIcon: '/company-icons/umami-games.png',
+        linkedinUrl: 'https://www.linkedin.com/company/umami-games1/',
+        iconUrl: 'https://cdn.simpleicons.org/umami/000000',
+        clearbitLogo: 'https://logo.clearbit.com/umamigames.com',
+    },
+    'Kob Games Studios': { 
+        label: 'Kob Games Studios',
+        localIcon: '/company-icons/kob-studios.png',
+        linkedinUrl: 'https://www.linkedin.com/company/kobgames/',
+        iconUrl: 'https://cdn.simpleicons.org/kobgames/000000',
+        clearbitLogo: 'https://logo.clearbit.com/kobgames.com',
+    },
+    'Yajulu': { 
+        label: 'Yajulu',
+        localIcon: '/company-icons/yajulu.png',
+        linkedinUrl: 'https://www.linkedin.com/company/yajulu/',
+        iconUrl: 'https://cdn.simpleicons.org/yajulu/000000',
+        clearbitLogo: 'https://logo.clearbit.com/yajulu.com',
+    },
+};
