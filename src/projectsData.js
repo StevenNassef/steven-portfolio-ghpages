@@ -61,6 +61,39 @@ function generateMediaPaths(key, options = {}) {
 
 export const projects = [
     {
+        key: "mergedom",
+        title: "Mergedom: Home Design",
+        role: "",
+        ...generateMediaPaths("mergedom", { maxImages: 9, extensions: ['.PNG'] }),
+        aspectRatio: "9 / 19.5",
+        itemsPerView: 3,
+        description: "A home design mobile game where players merge items to create beautiful spaces. Features core gameplay systems, feature flags, IAP integration, and live-ops content tooling for seasonal events and special promotions.",
+        timeline: "2025",
+        jobTitle: "Senior Unity Engineer",
+        teamSize: 10,
+        engine: "Unity",
+        duration: "Ongoing",
+        bullets: [
+            "Core gameplay systems with merge mechanics and home design customization.",
+            "Feature flags infrastructure for A/B testing and gradual feature rollouts.",
+            "IAP integration with multiple monetization strategies and analytics tracking.",
+            "Live-ops content tooling for seasonal events (e.g., Throwback Treasure, Chocolate Box).",
+            "Performance profiling and optimization for smooth gameplay on mobile devices.",
+            "SDK integrations for analytics, attribution, and third-party services.",
+        ],
+        stack: ["Unity", "C#", "Live-Ops", "IAP"],
+        challenges: [
+            "Implemented efficient merge mechanics that maintain performance with complex item hierarchies.",
+            "Designed flexible live-ops system for remote content updates without app releases.",
+            "Optimized rendering pipeline for smooth 60fps gameplay with detailed home designs.",
+            "Integrated multiple SDKs while maintaining code modularity and testability.",
+        ],
+        links: {
+            appStore: "https://apps.apple.com/app/id1549205071",
+            playStore: "https://play.google.com/store/apps/details?id=com.mergedomhomedesign.game",
+        },
+    },
+    {
         key: "kortifo",
         title: "Kortifo",
         role: "",
