@@ -46,7 +46,12 @@ function setTitle(title) {
  */
 export function updateMetaTags({ title, description, image, url, type = 'website' }) {
   const fullUrl = url ? (url.startsWith('http') ? url : `${SITE_URL}${url}`) : SITE_URL;
-  const fullImage = image ? (image.startsWith('http') ? image : `${SITE_URL}${image}`) : DEFAULT_IMAGE;
+  // Ensure image is always an absolute URL
+  let fullImage = image ? (image.startsWith('http') ? image : `${SITE_URL}${image}`) : DEFAULT_IMAGE;
+  // Remove any leading slashes that might cause issues
+  if (fullImage.startsWith('//')) {
+    fullImage = `https:${fullImage}`;
+  }
   
   // Update title
   if (title) {
@@ -66,10 +71,17 @@ export function updateMetaTags({ title, description, image, url, type = 'website
     setMetaTag('twitter:url', fullUrl);
   }
   
-  // Update image
-  if (image) {
+  // Update image with all required properties for WhatsApp
+  if (image || fullImage) {
     setMetaTag('og:image', fullImage);
+    setMetaTag('og:image:url', fullImage); // WhatsApp sometimes needs this
+    setMetaTag('og:image:secure_url', fullImage.replace('http://', 'https://')); // WhatsApp requires HTTPS
     setMetaTag('twitter:image', fullImage);
+    // Add image dimensions if not already set
+    if (!document.querySelector('meta[property="og:image:width"]')) {
+      setMetaTag('og:image:width', '1200');
+      setMetaTag('og:image:height', '630');
+    }
   }
   
   // Update Open Graph type
@@ -83,6 +95,9 @@ export function updateMetaTags({ title, description, image, url, type = 'website
   
   // Ensure site name is set
   setMetaTag('og:site_name', SITE_NAME);
+  
+  // WhatsApp-specific: Ensure locale is set
+  setMetaTag('og:locale', 'en_US');
 }
 
 /**
