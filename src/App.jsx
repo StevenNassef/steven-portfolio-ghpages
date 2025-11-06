@@ -340,7 +340,7 @@ function Home({ onOpenProject }) {
         </div>
       </Section>
 
-      <Section id='projects' title='Selected Projects'>
+      <Section id='projects' title='Projects'>
         <div className='grid md:grid-cols-2 gap-6'>
           {projects.map(p => (
             <Card
