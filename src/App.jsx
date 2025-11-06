@@ -1,8 +1,10 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState, lazy, Suspense } from 'react'
 import { Github, Linkedin, Mail, Download, Gamepad2, Wrench, Cpu, Rocket, Clock, Users, Smartphone, ExternalLink } from 'lucide-react'
 import { projects, experiences, companyConfig } from './projectsData.js'
-import MediaCarousel from "./components/MediaCarousel.jsx";
 import { getMediaUrl, getCvUrl } from './config.js';
+
+// Lazy load MediaCarousel to reduce initial bundle size
+const MediaCarousel = lazy(() => import("./components/MediaCarousel.jsx"));
 
 const Badge = ({children}) => <span className='badge'>{children}</span>
 const Card = ({children, className = '', ...props}) => <div className={`card ${className}`} {...props}>{children}</div>
@@ -65,11 +67,23 @@ const cleanLogoUrl = (url) => {
   }
 };
 
-// Helper function to extract LinkedIn company logo URL
+// Cache for LinkedIn logos to avoid repeated fetches
+const linkedInLogoCache = new Map();
+
+// Helper function to extract LinkedIn company logo URL with caching
 const extractLinkedInLogo = async (linkedinUrl) => {
   if (!linkedinUrl) return null;
   
+  // Check cache first
+  if (linkedInLogoCache.has(linkedinUrl)) {
+    return linkedInLogoCache.get(linkedinUrl);
+  }
+  
   try {
+    // Use AbortController for timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+    
     const proxies = [
       `https://api.allorigins.win/raw?url=${encodeURIComponent(linkedinUrl)}`,
       `https://corsproxy.io/?${encodeURIComponent(linkedinUrl)}`,
@@ -79,9 +93,13 @@ const extractLinkedInLogo = async (linkedinUrl) => {
     let html = null;
     for (const proxyUrl of proxies) {
       try {
-        const response = await fetch(proxyUrl);
+        const response = await fetch(proxyUrl, { 
+          signal: controller.signal,
+          cache: 'force-cache' // Use browser cache when available
+        });
         if (response.ok) {
           html = await response.text();
+          clearTimeout(timeoutId);
           break;
         }
       } catch {
@@ -89,7 +107,12 @@ const extractLinkedInLogo = async (linkedinUrl) => {
       }
     }
     
-    if (!html) return null;
+    clearTimeout(timeoutId);
+    
+    if (!html) {
+      linkedInLogoCache.set(linkedinUrl, null); // Cache null to avoid retrying
+      return null;
+    }
     
     const logoPatterns = [
       /<meta\s+property="og:image"\s+content="([^"]+)"/i,
@@ -104,12 +127,19 @@ const extractLinkedInLogo = async (linkedinUrl) => {
       if (match) {
         const logoUrl = match[1] || match[0];
         if (logoUrl?.includes('media.licdn.com')) {
-          return cleanLogoUrl(logoUrl);
+          const cleanedUrl = cleanLogoUrl(logoUrl);
+          linkedInLogoCache.set(linkedinUrl, cleanedUrl); // Cache the result
+          return cleanedUrl;
         }
       }
     }
+    
+    linkedInLogoCache.set(linkedinUrl, null); // Cache null if no logo found
   } catch (error) {
-    console.error('Error extracting LinkedIn logo:', error);
+    if (error.name !== 'AbortError') {
+      console.error('Error extracting LinkedIn logo:', error);
+    }
+    linkedInLogoCache.set(linkedinUrl, null);
   }
   
   return null;
@@ -126,13 +156,23 @@ const CompanyIcon = ({ company, size = 'md' }) => {
   const localIcon = config.localIcon ? getMediaUrl(config.localIcon) : null;
   
   // Fetch LinkedIn logo if URL is provided and not already fetched
+  // Use requestIdleCallback for non-critical loading
   React.useEffect(() => {
     if (config.linkedinUrl && !linkedinLogos[company]) {
-      extractLinkedInLogo(config.linkedinUrl).then(logoUrl => {
-        if (logoUrl) {
-          setLinkedinLogos(prev => ({ ...prev, [company]: logoUrl }));
-        }
-      });
+      const loadLogo = () => {
+        extractLinkedInLogo(config.linkedinUrl).then(logoUrl => {
+          if (logoUrl) {
+            setLinkedinLogos(prev => ({ ...prev, [company]: logoUrl }));
+          }
+        });
+      };
+      
+      // Use requestIdleCallback if available, otherwise setTimeout
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(loadLogo, { timeout: 2000 });
+      } else {
+        setTimeout(loadLogo, 100);
+      }
     }
   }, [company, config.linkedinUrl, linkedinLogos]);
   
@@ -291,6 +331,8 @@ function Home({ onOpenProject }) {
                 src={getMediaUrl("/profile/profile.png")} 
                 alt="Steven Nassef Henry" 
                 className='w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-border'
+                loading="eager"
+                fetchpriority="high"
               />
               <h1 className='text-4xl sm:text-5xl font-extrabold tracking-tight'>Steven Nassef Henry</h1>
             </div>
@@ -388,13 +430,15 @@ function Home({ onOpenProject }) {
                 </div>
               </CardHeader>
               <CardContent>
-                <MediaCarousel
-                  title={p.title}
-                  main={p.main}
-                  gallery={p.gallery}
-                  aspect={p.aspectRatio}  // iPhone 13 Pro Max landscape
-                  itemsPerView={p.itemsPerView}
-                />
+                <Suspense fallback={<div className="w-full aspect-video bg-card rounded-lg animate-pulse" />}>
+                  <MediaCarousel
+                    title={p.title}
+                    main={p.main}
+                    gallery={p.gallery}
+                    aspect={p.aspectRatio}  // iPhone 13 Pro Max landscape
+                    itemsPerView={p.itemsPerView}
+                  />
+                </Suspense>
 
                 <ul className='list-disc pl-5 space-y-1 text-sm mt-4'>
                   {p.bullets.map((b,i)=>(<li key={i}>{b}</li>))}
@@ -494,13 +538,15 @@ function ProjectDetail({ projectKey, onBack }) {
         </div>
 
         <div className='mt-8 mb-8'>
-          <MediaCarousel 
-            title={p.title} 
-            main={p.main} 
-            gallery={p.gallery} 
-            aspect={p.aspectRatio || "16 / 9"}
-            itemsPerView={p.itemsPerView || 1}
-          />
+          <Suspense fallback={<div className="w-full aspect-video bg-card rounded-lg animate-pulse" />}>
+            <MediaCarousel 
+              title={p.title} 
+              main={p.main} 
+              gallery={p.gallery} 
+              aspect={p.aspectRatio || "16 / 9"}
+              itemsPerView={p.itemsPerView || 1}
+            />
+          </Suspense>
         </div>
 
         <div className='grid md:grid-cols-2 gap-6 mb-6'>

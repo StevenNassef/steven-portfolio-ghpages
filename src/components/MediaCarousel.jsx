@@ -12,6 +12,9 @@ export default function MediaCarousel({
 }) {
     // Track which media files failed to load
     const [failedMedia, setFailedMedia] = useState(new Set());
+    // Track which media items are visible (for lazy loading)
+    const [visibleItems, setVisibleItems] = useState(new Set());
+    const itemRefs = useRef(new Map());
 
     // Flatten slides and filter out failed ones
     const slides = useMemo(() => {
@@ -55,6 +58,42 @@ export default function MediaCarousel({
     const itemWidthPercent = itemsPerView === 1 
         ? 100 
         : (100 - (itemsPerView - 1) * gapPercent) / itemsPerView;
+
+    // Intersection Observer for lazy loading images
+    useEffect(() => {
+        if (!trackRef.current || slides.length === 0) return;
+        
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        const src = entry.target.getAttribute('data-src');
+                        if (src) {
+                            setVisibleItems(prev => new Set(prev).add(src));
+                        }
+                    }
+                });
+            },
+            {
+                root: trackRef.current,
+                rootMargin: '50px', // Start loading 50px before item enters viewport
+                threshold: 0.1,
+            }
+        );
+
+        // Use setTimeout to ensure DOM is updated
+        const timeoutId = setTimeout(() => {
+            // Observe all items
+            itemRefs.current.forEach((ref) => {
+                if (ref) observer.observe(ref);
+            });
+        }, 0);
+
+        return () => {
+            clearTimeout(timeoutId);
+            observer.disconnect();
+        };
+    }, [slides.length]);
 
     // Track active page based on scroll position
     useEffect(() => {
@@ -123,9 +162,16 @@ export default function MediaCarousel({
                     // Determine if this item should snap (first item of each page)
                     const isFirstInPage = i % itemsPerView === 0;
                     
+                    // Check if this item should be loaded (first few items or visible)
+                    const shouldLoad = i < itemsPerView * 2 || visibleItems.has(slide.src);
+                    
                     return (
                         <div
                             key={`${slide.src}-${i}`}
+                            ref={(el) => {
+                                if (el) itemRefs.current.set(slide.src, el);
+                            }}
+                            data-src={slide.src}
                             className="media bg-card"
                             style={{
                                 scrollSnapAlign: isFirstInPage ? "start" : "none",
@@ -136,14 +182,14 @@ export default function MediaCarousel({
                         >
                             {slide.type === "video" ? (
                                 <video
-                                    src={slide.src}
-                                    poster={slide.poster || undefined}
+                                    src={shouldLoad ? slide.src : undefined}
+                                    poster={shouldLoad ? (slide.poster || undefined) : undefined}
                                     controls
                                     playsInline
                                     muted
-                                    autoPlay
+                                    autoPlay={shouldLoad}
                                     loop
-                                    preload="metadata"
+                                    preload={shouldLoad ? "metadata" : "none"}
                                     onError={(e) => {
                                         e.currentTarget.style.display = 'none';
                                         handleMediaError(slide.src);
@@ -152,9 +198,9 @@ export default function MediaCarousel({
                                 />
                             ) : (
                                 <img
-                                    src={slide.src}
+                                    src={shouldLoad ? slide.src : undefined}
                                     alt={`${title} ${i + 1}`}
-                                    loading="lazy"
+                                    loading={i < itemsPerView ? "eager" : "lazy"}
                                     onError={(e) => {
                                         e.currentTarget.style.display = 'none';
                                         handleMediaError(slide.src);
