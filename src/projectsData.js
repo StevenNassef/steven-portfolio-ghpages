@@ -357,30 +357,30 @@ export const experiences = [
 export const companyConfig = {
     'Carry1st': { 
         label: 'Carry1st',
-        localIcon: '/company-icons/carry1st.png',
+        // localIcon: '/company-icons/carry1st.png',
         linkedinUrl: 'https://www.linkedin.com/company/carry1st/',
-        iconUrl: 'https://cdn.simpleicons.org/carry1st/000000',
+        // iconUrl: 'https://cdn.simpleicons.org/carry1st/000000',
         clearbitLogo: 'https://logo.clearbit.com/carry1st.com',
     },
     'Umami Games': { 
         label: 'Umami Games',
-        localIcon: '/company-icons/umami-games.png',
+        // localIcon: '/company-icons/umami-games.png',
         linkedinUrl: 'https://www.linkedin.com/company/umami-games1/',
-        iconUrl: 'https://cdn.simpleicons.org/umami/000000',
+        // iconUrl: 'https://cdn.simpleicons.org/umami/000000',
         clearbitLogo: 'https://logo.clearbit.com/umamigames.com',
     },
     'Kob Games Studios': { 
         label: 'Kob Games Studios',
-        localIcon: '/company-icons/kob-studios.png',
+        // localIcon: '/company-icons/kob-studios.png',
         linkedinUrl: 'https://www.linkedin.com/company/kobgames/',
-        iconUrl: 'https://cdn.simpleicons.org/kobgames/000000',
+        // iconUrl: 'https://cdn.simpleicons.org/kobgames/000000',
         clearbitLogo: 'https://logo.clearbit.com/kobgames.com',
     },
     'Yajulu': { 
         label: 'Yajulu',
-        localIcon: '/company-icons/yajulu.png',
+        // localIcon: '/company-icons/yajulu.png',
         linkedinUrl: 'https://www.linkedin.com/company/yajulu/',
-        iconUrl: 'https://cdn.simpleicons.org/yajulu/000000',
+        // iconUrl: 'https://cdn.simpleicons.org/yajulu/000000',
         clearbitLogo: 'https://logo.clearbit.com/yajulu.com',
     },
 };
