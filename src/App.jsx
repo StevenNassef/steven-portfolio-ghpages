@@ -396,46 +396,49 @@ function Home({ onOpenProject }) {
                   aspect={p.aspectRatio}  // iPhone 13 Pro Max landscape
                   itemsPerView={p.itemsPerView}
                 />
-                <div className='flex flex-wrap items-center gap-4 mt-4 pt-4 border-t border-border text-sm'>
-                  {p.metrics?.rating && (
-                    <div className='relative group flex items-center gap-1.5'>
-                      <span>⭐</span>
-                      <span className='font-medium'>{p.metrics.rating}</span>
-                      {/* Tooltip */}
-                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2.5 py-1.5 text-xs font-medium text-white bg-gray-900 dark:bg-gray-800 rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
-                        Store Rating
-                        <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-900 dark:border-t-gray-800"></div>
+                <div className='flex flex-wrap items-center gap-4 mt-4 border-t border-border text-sm'></div>
+                {p.metrics && (p.metrics.downloads || p.metrics.rating || p.metrics.dau) && (
+                  <div className='flex flex-wrap items-center gap-4 pt-4 text-sm'>
+                    {p.metrics.rating && (
+                      <div className='relative group flex items-center gap-1.5'>
+                        <span>⭐</span>
+                        <span className='font-medium'>{p.metrics.rating}</span>
+                        {/* Tooltip */}
+                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2.5 py-1.5 text-xs font-medium text-white bg-gray-900 dark:bg-gray-800 rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
+                          Store Rating
+                          <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-900 dark:border-t-gray-800"></div>
+                        </div>
                       </div>
-                    </div>
-                  )}
-                  {p.metrics?.downloads && (
-                    <div className='relative group flex items-center gap-1.5'>
-                      <Download className='h-3.5 w-3.5' />
-                      <span className='font-medium'>{p.metrics.downloads}</span>
-                      {/* Tooltip */}
-                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2.5 py-1.5 text-xs font-medium text-white bg-gray-900 dark:bg-gray-800 rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
-                        Total Downloads
-                        <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-900 dark:border-t-gray-800"></div>
+                    )}
+                    {p.metrics.downloads && (
+                      <div className='relative group flex items-center gap-1.5'>
+                        <Download className='h-3.5 w-3.5' />
+                        <span className='font-medium'>{p.metrics.downloads}</span>
+                        {/* Tooltip */}
+                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2.5 py-1.5 text-xs font-medium text-white bg-gray-900 dark:bg-gray-800 rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
+                          Total Downloads
+                          <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-900 dark:border-t-gray-800"></div>
+                        </div>
                       </div>
-                    </div>
-                  )}
-                  {p.metrics?.dau && (
-                    <div className='relative group flex items-center gap-1.5'>
-                      <Users className='h-3.5 w-3.5' />
-                      <span className='font-medium'>{p.metrics.dau}</span>
-                      <span className='text-muted'>DAU</span>
-                      {/* Tooltip */}
-                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2.5 py-1.5 text-xs font-medium text-white bg-gray-900 dark:bg-gray-800 rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
-                        Daily Active Users
-                        <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-900 dark:border-t-gray-800"></div>
+                    )}
+                    {p.metrics.dau && (
+                      <div className='relative group flex items-center gap-1.5'>
+                        <Users className='h-3.5 w-3.5' />
+                        <span className='font-medium'>{p.metrics.dau}</span>
+                        <span className='text-muted'>DAU</span>
+                        {/* Tooltip */}
+                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2.5 py-1.5 text-xs font-medium text-white bg-gray-900 dark:bg-gray-800 rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
+                          Daily Active Users
+                          <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-900 dark:border-t-gray-800"></div>
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </div>
-                <ul className='list-disc pl-5 space-y-1 text-sm mt-4'>
+                    )}
+                  </div>
+                )}
+                <ul className='list-disc pl-5 space-y-1 text-sm pt-4'>
                   {p.bullets.map((b,i)=>(<li key={i}>{b}</li>))}
                 </ul>
-                <div className='flex flex-wrap gap-2 pt-3'>
+                <div className='flex flex-wrap gap-2 pt-4'>
                   {p.stack.map((s,i)=>(<Badge key={i}>{s}</Badge>))}
                 </div>
               </CardContent>
