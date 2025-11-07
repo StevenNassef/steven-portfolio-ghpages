@@ -146,13 +146,22 @@ export default function MediaCarousel({
                                     poster={slide.poster || undefined}
                                     controls={showControls}
                                     playsInline
-                                    muted
-                                    autoPlay
-                                    loop
+                                    muted={true}
+                                    autoPlay={true}
+                                    loop={true}
                                     preload="metadata"
                                     onError={(e) => {
                                         e.currentTarget.style.display = 'none';
                                         handleMediaError(slide.src);
+                                    }}
+                                    onLoadedMetadata={(e) => {
+                                        // Try to play on mobile after metadata loads
+                                        const video = e.currentTarget;
+                                        if (video.muted) {
+                                            video.play().catch(() => {
+                                                // Autoplay blocked, user will need to interact
+                                            });
+                                        }
                                     }}
                                     className="w-full h-full object-cover"
                                     style={{ maxWidth: '100%', maxHeight: '100%' }}
