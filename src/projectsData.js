@@ -23,7 +23,7 @@ function generateMediaPaths(key, options = {}) {
     const gallery = [];
     
     // Try to add video (both lowercase and uppercase extensions)
-    const videoExtensions = ['.mp4', '.MP4'];
+    const videoExtensions = ['.mp4'];
     for (const ext of videoExtensions) {
         const videoPath = getMediaUrl(`${projectPath}/${key}${ext}`);
         // Get poster from first numbered image
@@ -63,7 +63,7 @@ export const projects = [
         key: "mergedom",
         title: "Mergedom: Home Design",
         role: "",
-        ...generateMediaPaths("mergedom", { maxImages: 9 }),
+        ...generateMediaPaths("mergedom", { maxImages: 8 }),
         aspectRatio: "9 / 19.5",
         itemsPerView: 3,
         description: "A home design mobile game where players merge items to create beautiful spaces. Features core gameplay systems, feature flags, IAP integration, and live-ops content tooling for seasonal events and special promotions.",
@@ -137,7 +137,7 @@ export const projects = [
         key: "cairo_invaiders",
         title: "The Second Time Aliens Invaded Cairo",
         role: "",
-        ...generateMediaPaths("cairo_invaiders", { maxImages: 16 }),
+        ...generateMediaPaths("cairo_invaiders", { maxImages: 2 }),
         aspectRatio: "16 / 9",
         itemsPerView: 1,
         description: "A fast-paced action game set in Cairo with unique Egyptian-themed visuals. Features responsive touch controls and dynamic enemy wave systems that scale difficulty progressively.",
@@ -166,7 +166,7 @@ export const projects = [
         key: "zarzura",
         title: "Zarzura",
         role: "",
-        ...generateMediaPaths("zarzura"),
+        ...generateMediaPaths("zarzura", { maxImages: 11 }),
         aspectRatio: "9 / 19.5",
         itemsPerView: 3,
         description: "A word-trivia mobile game that challenges players with engaging puzzles and vocabulary challenges. Features daily challenges, leaderboards, and a comprehensive word database.",
@@ -201,7 +201,7 @@ export const projects = [
         key: "coin_forge",
         title: "Coin Forge",
         role: "",
-        ...generateMediaPaths("coin_forge"),
+        ...generateMediaPaths("coin_forge", { maxImages: 6 }),
         aspectRatio: "9 / 19.5",
         itemsPerView: 3,
         description: "An incremental/idle game where players forge coins and build their empire. Features deep progression systems, automated production chains, and comprehensive store operations including IAP and analytics.",
@@ -231,7 +231,7 @@ export const projects = [
         key: "rent_lord",
         title: "Rent Lord",
         role: "",
-        ...generateMediaPaths("rent_lord"),
+        ...generateMediaPaths("rent_lord", { maxImages: 6 }),
         aspectRatio: "9 / 19.5",
         itemsPerView: 3,
         description: "A property management simulation game where players build and manage a real estate empire. Features complex economy systems, live-ops events, and comprehensive analytics integration.",
@@ -260,7 +260,7 @@ export const projects = [
         key: "rocket_factory",
         title: "Rocket Factory",
         role: "",
-        ...generateMediaPaths("rocket_factory"),
+        ...generateMediaPaths("rocket_factory", { maxImages: 8 }),
         aspectRatio: "9 / 19.5",
         itemsPerView: 3,
         description: "A physics-based puzzle game where players assemble rockets from various components. Features realistic physics simulation, component customization, and launch mechanics that test player creativity.",
@@ -290,7 +290,7 @@ export const projects = [
         key: "jumpy_shooter",
         title: "Jumpy Shooter",
         role: "",
-        ...generateMediaPaths("jumpy_shooter"),
+        ...generateMediaPaths("jumpy_shooter", { maxImages: 3 }),
         aspectRatio: "9 / 19.5",
         itemsPerView: 3,
         description: "An action-packed mobile shooter combining platforming mechanics with shooting gameplay. Features procedurally generated levels and upgrade systems that keep players engaged.",
