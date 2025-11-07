@@ -9,6 +9,7 @@ export default function MediaCarousel({
     itemsPerView = 1,
     showDots = true,
     showArrows = true,
+    showControls = true,
 }) {
     // Track which media files failed to load
     const [failedMedia, setFailedMedia] = useState(new Set());
@@ -143,7 +144,7 @@ export default function MediaCarousel({
                                 <video
                                     src={slide.src}
                                     poster={slide.poster || undefined}
-                                    controls
+                                    controls={showControls}
                                     playsInline
                                     muted
                                     autoPlay
