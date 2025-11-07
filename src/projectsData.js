@@ -92,6 +92,11 @@ export const projects = [
             appStore: "https://apps.apple.com/app/id1549205071",
             playStore: "https://play.google.com/store/apps/details?id=com.mergedomhomedesign.game",
         },
+        metrics: {
+            downloads: "20M+",
+            rating: "4.6",
+            dau: "100K+",
+        },
     },
     {
         key: "kortifo",
@@ -126,6 +131,7 @@ export const projects = [
         metrics: {
             downloads: "150K+",
             rating: "4.4",
+            dau: "5K+",
         },
     },
     {
@@ -185,6 +191,12 @@ export const projects = [
         links: {
             appStore: "https://apps.apple.com/app/id1599258541",
           }
+          ,
+          metrics: {
+            downloads: "10K+",
+            rating: "4.9",
+            dau: "500",
+        },
     },
     {
         key: "coin_forge",
