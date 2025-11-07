@@ -103,13 +103,15 @@ export default function MediaCarousel({
     if (slides.length === 0) return null;
 
     return (
-        <div className="relative group w-full">
+        <div className="relative group w-full" style={{ maxWidth: '100%', overflow: 'hidden' }}>
             <div
                 ref={trackRef}
                 className="carousel hide-scrollbar"
                 style={{ 
                     scrollSnapType: "x mandatory",
                     gap: itemsPerView > 1 ? `${gapPercent}%` : "0",
+                    maxWidth: '100%',
+                    boxSizing: 'border-box',
                 }}
                 aria-roledescription="carousel"
                 aria-label={`${title} media`}
@@ -132,6 +134,9 @@ export default function MediaCarousel({
                                 flexShrink: 0,
                                 width: `${itemWidthPercent}%`,
                                 aspectRatio: aspect,
+                                maxWidth: '100%',
+                                minHeight: 0,
+                                minWidth: 0,
                             }}
                         >
                             {slide.type === "video" ? (
@@ -149,6 +154,7 @@ export default function MediaCarousel({
                                         handleMediaError(slide.src);
                                     }}
                                     className="w-full h-full object-cover"
+                                    style={{ maxWidth: '100%', maxHeight: '100%' }}
                                 />
                             ) : (
                                 <img
@@ -160,6 +166,7 @@ export default function MediaCarousel({
                                         handleMediaError(slide.src);
                                     }}
                                     className="w-full h-full object-cover"
+                                    style={{ maxWidth: '100%', maxHeight: '100%' }}
                                 />
                             )}
                         </div>
