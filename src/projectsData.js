@@ -2,7 +2,7 @@ import { getMediaUrl } from './config.js';
 
 /**
  * Dynamically generates media paths based on naming convention:
- * - Main: {key}_main.jpeg or {key}_main.PNG
+ * - Main: {key}_main.jpeg
  * - Gallery: {key}_1.jpeg, {key}_2.jpeg, etc. (numbered sequentially)
  * - Video: {key}.mp4 or {key}.MP4
  * - Poster: First numbered image (e.g., {key}_1.jpeg)
@@ -10,13 +10,13 @@ import { getMediaUrl } from './config.js';
  * @param {string} key - Project key (folder name)
  * @param {object} options - Configuration options
  * @param {number} options.maxImages - Maximum number of images to generate (default: 20)
- * @param {string[]} options.extensions - Image extensions to try (default: ['.jpeg', '.PNG'])
+ * @param {string[]} options.extensions - Image extensions to try (default: ['.jpeg'])
  */
 function generateMediaPaths(key, options = {}) {
-    const { maxImages = 20, extensions = ['.jpeg', '.PNG'] } = options;
+    const { maxImages = 20, extensions = ['.jpeg'] } = options;
     const projectPath = `/projects/${key}`;
     
-    // Main image - try both extensions
+    // Main image
     const main = getMediaUrl(`${projectPath}/${key}_main.jpeg`);
     
     // Gallery array
@@ -26,9 +26,8 @@ function generateMediaPaths(key, options = {}) {
     const videoExtensions = ['.mp4', '.MP4'];
     for (const ext of videoExtensions) {
         const videoPath = getMediaUrl(`${projectPath}/${key}${ext}`);
-        // Try to get poster from first numbered image
-        const poster = getMediaUrl(`${projectPath}/${key}_1.jpeg`) || 
-                       getMediaUrl(`${projectPath}/${key}_1.PNG`);
+        // Get poster from first numbered image
+        const poster = getMediaUrl(`${projectPath}/${key}_1.jpeg`);
         gallery.push({
             type: "video",
             src: videoPath,
@@ -64,7 +63,7 @@ export const projects = [
         key: "mergedom",
         title: "Mergedom: Home Design",
         role: "",
-        ...generateMediaPaths("mergedom", { maxImages: 9, extensions: ['.PNG'] }),
+        ...generateMediaPaths("mergedom", { maxImages: 9 }),
         aspectRatio: "9 / 19.5",
         itemsPerView: 3,
         description: "A home design mobile game where players merge items to create beautiful spaces. Features core gameplay systems, feature flags, IAP integration, and live-ops content tooling for seasonal events and special promotions.",
@@ -102,7 +101,7 @@ export const projects = [
         key: "kortifo",
         title: "Kortifo",
         role: "",
-        ...generateMediaPaths("kortifo", { maxImages: 16, extensions: ['.PNG'] }),
+        ...generateMediaPaths("kortifo", { maxImages: 16 }),
         aspectRatio: "9 / 19.5",
         itemsPerView: 3,
         description: "A mobile game combining card mechanics with strategic gameplay. Built from concept to launch as a solo project, focusing on intuitive touch controls and engaging progression systems.",
@@ -138,7 +137,7 @@ export const projects = [
         key: "cairo_invaiders",
         title: "The Second Time Aliens Invaded Cairo",
         role: "",
-        ...generateMediaPaths("cairo_invaiders", { maxImages: 16, extensions: ['.PNG'] }),
+        ...generateMediaPaths("cairo_invaiders", { maxImages: 16 }),
         aspectRatio: "16 / 9",
         itemsPerView: 1,
         description: "A fast-paced action game set in Cairo with unique Egyptian-themed visuals. Features responsive touch controls and dynamic enemy wave systems that scale difficulty progressively.",
