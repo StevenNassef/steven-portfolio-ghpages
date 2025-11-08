@@ -1,0 +1,11 @@
+# BIMI Selector Configuration
+# This file helps email clients locate your BIMI logo
+# 
+# For BIMI to work, you also need:
+# 1. DMARC policy set up for your domain (stevennassef.com)
+# 2. DNS TXT record pointing to this SVG file
+# 3. SVG logo file hosted and accessible
+
+# Default selector (most common)
+default=https://www.stevennassef.com/.well-known/bimi-logo.svg
+
