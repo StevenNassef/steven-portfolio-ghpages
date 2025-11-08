@@ -303,9 +303,9 @@ function Home({ onOpenProject }) {
             </div>
           </div>
           <div className='flex flex-wrap gap-3'>
-            <a className='btn btn-primary' href='mailto:stevennassef97@gmail.com'><Mail className='h-4 w-4'/> Contact</a>
+            <a className='btn btn-primary' href='mailto:contact@stevennassef.com'><Mail className='h-4 w-4'/> Contact</a>
             <a className='btn btn-outline' href='https://github.com/StevenNassef' target='_blank' rel='noreferrer'><Github className='h-4 w-4'/> GitHub</a>
-            <a className='btn btn-outline' href='https://www.linkedin.com/in/steven-nassef-henry-192366227/' target='_blank' rel='noreferrer'><Linkedin className='h-4 w-4'/> LinkedIn</a>
+            <a className='btn btn-outline' href='https://www.linkedin.com/in/steven-nassef/' target='_blank' rel='noreferrer'><Linkedin className='h-4 w-4'/> LinkedIn</a>
             {getCvUrl() && (
               <a className='btn btn-outline' href={getCvUrl()} target='_blank' rel='noreferrer' download><Download className='h-4 w-4'/> Resume</a>
             )}
@@ -643,6 +643,21 @@ function ProjectDetail({ projectKey, onBack }) {
 
 export default function App(){
   const [route, setRoute] = useState(parseRoute());
+
+  // Handle /resume path redirect
+  useEffect(() => {
+    const pathname = window.location.pathname;
+    if (pathname === '/resume' || pathname === '/resume/') {
+      const cvUrl = getCvUrl();
+      if (cvUrl) {
+        window.location.href = cvUrl;
+      } else {
+        // If no CV URL is configured, redirect to home
+        window.location.href = '/';
+      }
+      return;
+    }
+  }, []);
 
   useEffect(() => {
     const onHash = () => setRoute(parseRoute());
