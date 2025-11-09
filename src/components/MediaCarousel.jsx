@@ -161,6 +161,7 @@ export default function MediaCarousel({
                                     autoPlay={true}
                                     loop={true}
                                     preload="metadata"
+                                    aria-label={`${title} - Gameplay video ${i + 1}${slides.length > 1 ? ` of ${slides.length}` : ''}`}
                                     onError={(e) => {
                                         const video = e.currentTarget;
                                         const hasTriedFallback = fallbackAttemptedRef.current.has(displaySrc);
@@ -178,11 +179,13 @@ export default function MediaCarousel({
                                     }}
                                     className="w-full h-full object-cover"
                                     style={{ maxWidth: '100%', maxHeight: '100%' }}
-                                />
+                                >
+                                    <p>Your browser does not support video playback. Please view the gameplay video for {title}.</p>
+                                </video>
                             ) : (
                                 <img
                                     src={displaySrc}
-                                    alt={`${title} ${i + 1}`}
+                                    alt={`${title} - Screenshot ${i + 1}${slides.length > 1 ? ` of ${slides.length}` : ''}`}
                                     loading="lazy"
                                     onError={(e) => {
                                         e.currentTarget.style.display = 'none';
