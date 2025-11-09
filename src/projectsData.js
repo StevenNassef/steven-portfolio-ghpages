@@ -71,7 +71,7 @@ export const projects = [
         description: "A home design mobile game where players merge items to create beautiful spaces. Features core gameplay systems, feature flags, IAP integration, and live-ops content tooling for seasonal events and special promotions.",
         timeline: "2025",
         jobTitle: "Senior Unity Engineer",
-        teamSize: 10,
+        teamSize: 12,
         engine: "Unity",
         duration: "Ongoing",
         bullets: [
@@ -109,7 +109,7 @@ export const projects = [
         description: "A mobile game combining card mechanics with strategic gameplay. Built from concept to launch as a solo project, focusing on intuitive touch controls and engaging progression systems.",
         timeline: "2023-2024",
         jobTitle: "Lead Game Programmer",
-        teamSize: 4,
+        teamSize: 8,
         engine: "Unity",
         duration: "8 months",
         bullets: [
@@ -138,14 +138,14 @@ export const projects = [
     {
         key: "cairo_invaiders",
         title: "The Second Time Aliens Invaded Cairo",
-        role: "",
+        role: "Sole Developer",
         ...generateMediaPaths("cairo_invaiders", { maxImages: 2 }),
         aspectRatio: "16 / 9",
         itemsPerView: 1,
         description: "A fast-paced action game set in Cairo with unique Egyptian-themed visuals. Features responsive touch controls and dynamic enemy wave systems that scale difficulty progressively.",
         timeline: "2021-2022",
         jobTitle: "Lead Game Developer",
-        teamSize: 1,
+        teamSize: 3,
         engine: "Unity",
         duration: "1 week",
         bullets: [
@@ -167,14 +167,14 @@ export const projects = [
     {
         key: "zarzura",
         title: "Zarzura",
-        role: "",
+        role: "Sole Developer",
         ...generateMediaPaths("zarzura", { maxImages: 11 }),
         aspectRatio: "9 / 19.5",
         itemsPerView: 3,
         description: "A word-trivia mobile game that challenges players with engaging puzzles and vocabulary challenges. Features daily challenges, leaderboards, and a comprehensive word database.",
         timeline: "2020-2021",
         jobTitle: "Lead Game Developer",
-        teamSize: 1,
+        teamSize: 3,
         engine: "Unity",
         duration: "10 months",
         bullets: [
@@ -202,7 +202,7 @@ export const projects = [
     {
         key: "coin_forge",
         title: "Coin Forge",
-        role: "",
+        role: "Sole Developer",
         ...generateMediaPaths("coin_forge", { maxImages: 6 }),
         aspectRatio: "9 / 19.5",
         itemsPerView: 3,
@@ -232,7 +232,7 @@ export const projects = [
     {
         key: "rent_lord",
         title: "Rent Lord",
-        role: "",
+        role: "Sole Developer",
         ...generateMediaPaths("rent_lord", { maxImages: 6 }),
         aspectRatio: "9 / 19.5",
         itemsPerView: 3,
@@ -261,7 +261,7 @@ export const projects = [
     {
         key: "rocket_factory",
         title: "Rocket Factory",
-        role: "",
+        role: "Sole Developer",
         ...generateMediaPaths("rocket_factory", { maxImages: 8 }),
         aspectRatio: "9 / 19.5",
         itemsPerView: 3,
@@ -291,7 +291,7 @@ export const projects = [
     {
         key: "jumpy_shooter",
         title: "Jumpy Shooter",
-        role: "",
+        role: "Sole Developer",
         ...generateMediaPaths("jumpy_shooter", { maxImages: 3 }),
         aspectRatio: "9 / 19.5",
         itemsPerView: 3,
