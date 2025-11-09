@@ -351,7 +351,12 @@ function Home({ onOpenProject }) {
               className='cursor-pointer hover:ring-2 hover:ring-indigo-400/50 transition-shadow'
             >
               <CardHeader>
-                <CardTitle>{p.title}</CardTitle>
+                <div className='flex flex-wrap items-center gap-2 mb-2'>
+                  <CardTitle>{p.title}</CardTitle>
+                  {p.genre && (
+                    <Badge className='text-xs'>{p.genre}</Badge>
+                  )}
+                </div>
                 <div className='flex flex-wrap items-center gap-2 text-sm text-muted'>
                   {p.jobTitle && (
                     <div>{p.jobTitle}</div>
@@ -399,9 +404,11 @@ function Home({ onOpenProject }) {
                   showControls={false}
                   useLowQuality={true}
                 />
-                <div className='flex flex-wrap items-center gap-4 mt-4 border-t border-border text-sm'></div>
+                {p.description && (
+                  <p className='mt-4 text-sm text-muted line-clamp-3'>{p.description}</p>
+                )}
                 {p.metrics && (p.metrics.downloads || p.metrics.rating || p.metrics.dau) && (
-                  <div className='flex flex-wrap items-center gap-4 pt-4 text-sm'>
+                  <div className='flex flex-wrap items-center gap-4 mt-4 pt-4 border-t border-border text-sm'>
                     {p.metrics.rating && (
                       <div className='relative group flex items-center gap-1.5'>
                         <span>⭐</span>
@@ -438,11 +445,20 @@ function Home({ onOpenProject }) {
                     )}
                   </div>
                 )}
-                <ul className='list-disc pl-5 space-y-1 text-sm pt-4'>
-                  {p.bullets.map((b,i)=>(<li key={i}>{b}</li>))}
-                </ul>
-                <div className='flex flex-wrap gap-2 pt-4'>
-                  {p.stack.map((s,i)=>(<Badge key={i}>{s}</Badge>))}
+                <div className='mt-4'>
+                  <h4 className='text-sm font-semibold mb-2'>Key Features:</h4>
+                  <ul className='list-disc pl-5 space-y-1 text-sm text-muted'>
+                    {p.bullets.slice(0, 4).map((b,i)=>(<li key={i} className='line-clamp-2'>{b}</li>))}
+                    {p.bullets.length > 4 && (
+                      <li className='text-xs text-muted italic'>+ {p.bullets.length - 4} more features</li>
+                    )}
+                  </ul>
+                </div>
+                <div className='flex flex-wrap gap-2 pt-4 mt-4 border-t border-border'>
+                  {p.stack.slice(0, 6).map((s,i)=>(<Badge key={i} className='text-xs'>{s}</Badge>))}
+                  {p.stack.length > 6 && (
+                    <Badge className='text-xs text-muted'>+{p.stack.length - 6} more</Badge>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -503,6 +519,9 @@ function ProjectDetail({ projectKey, onBack }) {
         <header className='mb-8'>
           <h1 className='text-4xl sm:text-5xl font-extrabold tracking-tight'>{p.title}</h1>
           <div className='flex flex-wrap items-center gap-4 mt-2'>
+            {p.genre && (
+              <Badge className='text-xs'>{p.genre}</Badge>
+            )}
             {p.jobTitle && (
               <div className='text-lg text-muted'>{p.jobTitle}</div>
             )}
@@ -533,7 +552,7 @@ function ProjectDetail({ projectKey, onBack }) {
             )}
           </div>
           {p.description && (
-            <p className='mt-4 text-muted max-w-3xl'>{p.description}</p>
+            <p className='mt-4 text-base leading-relaxed text-muted max-w-3xl'>{p.description}</p>
           )}
         </header>
 
@@ -547,10 +566,29 @@ function ProjectDetail({ projectKey, onBack }) {
           />
         </div>
 
+        {p.highlights && p.highlights.length > 0 && (
+          <Card className='mb-6 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-950/20 dark:to-purple-950/20 border-indigo-200 dark:border-indigo-800'>
+            <CardHeader>
+              <CardTitle className='flex items-center gap-2'>
+                <Rocket className='h-5 w-5 text-indigo-600 dark:text-indigo-400' />
+                Highlights & Achievements
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul className='list-disc pl-5 space-y-2 text-sm'>
+                {p.highlights.map((h,i)=>(<li key={i} className='text-muted'>{h}</li>))}
+              </ul>
+            </CardContent>
+          </Card>
+        )}
+
         <div className='grid md:grid-cols-2 gap-6 mb-6'>
           <Card>
             <CardHeader>
-              <CardTitle>Key Features</CardTitle>
+              <CardTitle className='flex items-center gap-2'>
+                <Gamepad2 className='h-5 w-5' />
+                Key Features
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <ul className='list-disc pl-5 space-y-2 text-sm'>
@@ -559,27 +597,70 @@ function ProjectDetail({ projectKey, onBack }) {
             </CardContent>
           </Card>
 
-          <Card>
+          {p.challenges && p.challenges.length > 0 ? (
+            <Card>
+              <CardHeader>
+                <CardTitle className='flex items-center gap-2'>
+                  <Cpu className='h-5 w-5' />
+                  Technical Challenges & Solutions
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className='list-disc pl-5 space-y-3 text-sm'>
+                  {p.challenges.map((c,i)=>(<li key={i} className='leading-relaxed'>{c}</li>))}
+                </ul>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card>
+              <CardHeader>
+                <CardTitle className='flex items-center gap-2'>
+                  <Wrench className='h-5 w-5' />
+                  Technologies & Tools
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className='flex flex-wrap gap-2'>
+                  {p.stack.map((s,i)=>(<Badge key={i}>{s}</Badge>))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+
+        {p.gameplayMechanics && p.gameplayMechanics.length > 0 && (
+          <Card className='mb-6'>
             <CardHeader>
-              <CardTitle>Technologies & Tools</CardTitle>
+              <CardTitle className='flex items-center gap-2'>
+                <Gamepad2 className='h-5 w-5' />
+                Gameplay Mechanics
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className='grid sm:grid-cols-2 gap-3'>
+                {p.gameplayMechanics.map((m,i)=>(
+                  <div key={i} className='flex items-start gap-2 text-sm'>
+                    <span className='text-indigo-600 dark:text-indigo-400 mt-1'>•</span>
+                    <span>{m}</span>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {p.challenges && p.challenges.length > 0 && (
+          <Card className='mb-6'>
+            <CardHeader>
+              <CardTitle className='flex items-center gap-2'>
+                <Wrench className='h-5 w-5' />
+                Technologies & Tools
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className='flex flex-wrap gap-2'>
                 {p.stack.map((s,i)=>(<Badge key={i}>{s}</Badge>))}
               </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {p.challenges && p.challenges.length > 0 && (
-          <Card className='mb-6'>
-            <CardHeader>
-              <CardTitle>Technical Challenges & Solutions</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ul className='list-disc pl-5 space-y-2 text-sm'>
-                {p.challenges.map((c,i)=>(<li key={i}>{c}</li>))}
-              </ul>
             </CardContent>
           </Card>
         )}
