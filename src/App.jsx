@@ -396,6 +396,7 @@ function Home({ onOpenProject }) {
                   aspect={p.aspectRatio}  // iPhone 13 Pro Max landscape
                   itemsPerView={p.itemsPerView}
                   showControls={false}
+                  useLowQuality={true}
                 />
                 <div className='flex flex-wrap items-center gap-4 mt-4 border-t border-border text-sm'></div>
                 {p.metrics && (p.metrics.downloads || p.metrics.rating || p.metrics.dau) && (

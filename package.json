@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "generate-pdf": "node generate-portfolio-pdf.js",
     "generate-bimi": "node generate-bimi-svg-optimized.js",
-    "generate-bimi-basic": "node generate-bimi-svg.js"
+    "generate-bimi-basic": "node generate-bimi-svg.js",
+    "generate-low-quality-videos": "node generate-low-quality-videos.js"
   },
   "dependencies": {
     "firebase": "^12.5.0",
