@@ -26,11 +26,13 @@ function generateMediaPaths(key, options = {}) {
     const videoExtensions = ['.mp4'];
     for (const ext of videoExtensions) {
         const videoPath = getMediaUrl(`${projectPath}/${key}${ext}`);
+        const videoPathLow = getMediaUrl(`${projectPath}/${key}_low${ext}`);
         // Get poster from first numbered image
         const poster = getMediaUrl(`${projectPath}/${key}_1.jpeg`);
         gallery.push({
             type: "video",
-            src: videoPath,
+            src: videoPath, // High quality (original)
+            srcLow: videoPathLow, // Low quality (for home screen)
             poster: poster
         });
     }

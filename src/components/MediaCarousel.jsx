@@ -10,26 +10,33 @@ export default function MediaCarousel({
     showDots = true,
     showArrows = true,
     showControls = true,
+    useLowQuality = false,
 }) {
     // Track which media files failed to load
     const [failedMedia, setFailedMedia] = useState(new Set());
+    // Track which videos have attempted fallback to high quality
+    const fallbackAttemptedRef = useRef(new Set());
 
     // Flatten slides and filter out failed ones
     const slides = useMemo(() => {
         const items = [];
         for (const g of gallery) {
             if (!g?.src) continue;
-            const src = g.src;
+            
+            // Determine which source to use: low quality if available and useLowQuality is true
+            const displaySrc = (g.type === "video" && useLowQuality && g.srcLow) ? g.srcLow : g.src;
+            
             // Skip if we know this media failed to load
-            if (failedMedia.has(src)) continue;
+            if (failedMedia.has(displaySrc)) continue;
             items.push({ 
                 type: g.type === "video" ? "video" : "image", 
-                src: g.src, 
+                src: g.src, // High quality (original)
+                srcLow: g.srcLow, // Low quality (for videos)
                 poster: g.poster 
             });
         }
         return items;
-    }, [gallery, failedMedia]);
+    }, [gallery, failedMedia, useLowQuality]);
 
     // Handler to mark media as failed
     const handleMediaError = (src) => {
@@ -118,7 +125,11 @@ export default function MediaCarousel({
                 aria-label={`${title} media`}
             >
                 {slides.map((slide, i) => {
-                    const isFailed = failedMedia.has(slide.src);
+                    // Determine which source to display: low quality if available and useLowQuality is true
+                    const displaySrc = (slide.type === "video" && useLowQuality && slide.srcLow) ? slide.srcLow : slide.src;
+                    
+                    // Check if the display source has failed
+                    const isFailed = failedMedia.has(displaySrc);
                     
                     // Skip rendering if this media failed to load
                     if (isFailed) return null;
@@ -128,7 +139,7 @@ export default function MediaCarousel({
                     
                     return (
                         <div
-                            key={slide.src}
+                            key={displaySrc}
                             className="media bg-card"
                             style={{
                                 scrollSnapAlign: isFirstInPage ? "start" : "none",
@@ -142,7 +153,7 @@ export default function MediaCarousel({
                         >
                             {slide.type === "video" ? (
                                 <video
-                                    src={slide.src}
+                                    src={displaySrc}
                                     poster={slide.poster || undefined}
                                     controls={showControls}
                                     playsInline
@@ -151,20 +162,31 @@ export default function MediaCarousel({
                                     loop={true}
                                     preload="metadata"
                                     onError={(e) => {
-                                        e.currentTarget.style.display = 'none';
-                                        handleMediaError(slide.src);
+                                        const video = e.currentTarget;
+                                        const hasTriedFallback = fallbackAttemptedRef.current.has(displaySrc);
+                                        
+                                        // Try fallback to high quality (src) if using low quality and haven't tried yet
+                                        if (useLowQuality && slide.srcLow && slide.src && !hasTriedFallback) {
+                                            fallbackAttemptedRef.current.add(displaySrc);
+                                            video.src = slide.src;
+                                            return;
+                                        }
+                                        
+                                        // Hide video and mark the display source as failed
+                                        video.style.display = 'none';
+                                        handleMediaError(displaySrc);
                                     }}
                                     className="w-full h-full object-cover"
                                     style={{ maxWidth: '100%', maxHeight: '100%' }}
                                 />
                             ) : (
                                 <img
-                                    src={slide.src}
+                                    src={displaySrc}
                                     alt={`${title} ${i + 1}`}
                                     loading="lazy"
                                     onError={(e) => {
                                         e.currentTarget.style.display = 'none';
-                                        handleMediaError(slide.src);
+                                        handleMediaError(displaySrc);
                                     }}
                                     className="w-full h-full object-cover"
                                     style={{ maxWidth: '100%', maxHeight: '100%' }}
