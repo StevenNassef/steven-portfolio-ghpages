@@ -4,6 +4,7 @@ import { projects, experiences, companyConfig } from './projectsData.js'
 import MediaCarousel from "./components/MediaCarousel.jsx";
 import { getMediaUrl, getCvUrl } from './config.js';
 import { updateMetaTags, resetMetaTags } from './utils/metaTags.js';
+import { injectStructuredData, generatePersonSchema, generatePortfolioSchema, generateProjectSchema, generateBreadcrumbSchema } from './utils/structuredData.js';
 
 const Badge = ({children}) => <span className='badge'>{children}</span>
 const Card = ({children, className = '', ...props}) => <div className={`card ${className}`} {...props}>{children}</div>
@@ -283,14 +284,14 @@ function parseRoute() {
 function Home({ onOpenProject }) {
   const year = new Date().getFullYear()
   return (
-    <div>
+    <main>
       <header className='container py-16 flex flex-col gap-6'>
         <div className='flex flex-col md:flex-row md:items-center md:justify-between gap-6'>
           <div>
             <div className='flex items-center gap-4 mb-3'>
               <img 
                 src={getMediaUrl("/profile/profile.jpg")} 
-                alt="Steven Nassef Henry" 
+                alt="Steven Nassef Henry - Senior Unity Engineer and Game Developer" 
                 className='w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-border'
               />
               <h1 className='text-4xl sm:text-5xl font-extrabold tracking-tight'>Steven Nassef Henry</h1>
@@ -478,26 +479,28 @@ function Home({ onOpenProject }) {
       </Section>
 
       <footer className='py-10 text-center text-xs text-muted'>© {year} Steven Nassef Henry — Built with React & Tailwind</footer>
-    </div>
+    </main>
   )
 }
 
 function ProjectDetail({ projectKey, onBack }) {
   const p = useMemo(() => projects.find(x => x.key === projectKey), [projectKey]);
   if (!p) {
-    return (
-      <div className='container py-10'>
-        <button className='btn btn-outline mb-6 hover:ring-2 hover:ring-indigo-400/50 transition-shadow' onClick={onBack}>← Back to projects</button>
-        <h2 className='text-2xl font-bold'>Project not found</h2>
-        <p className='text-muted mt-2'>We couldn't find a project with key "{projectKey}".</p>
-      </div>
-    );
+  return (
+    <main className='container py-10'>
+      <button className='btn btn-outline mb-6 hover:ring-2 hover:ring-indigo-400/50 transition-shadow' onClick={onBack}>← Back to projects</button>
+      <h1 className='text-2xl font-bold'>Project not found</h1>
+      <p className='text-muted mt-2'>We couldn't find a project with key "{projectKey}".</p>
+    </main>
+  );
   }
   return (
-    <div className='container py-10'>
-      <button className='btn btn-outline mb-6 hover:ring-2 hover:ring-indigo-400/50 transition-shadow' onClick={onBack}>← Back to projects</button>
-      <div className='max-w-5xl mx-auto'>
-        <div className='mb-8'>
+    <main className='container py-10'>
+      <nav aria-label="Breadcrumb">
+        <button className='btn btn-outline mb-6 hover:ring-2 hover:ring-indigo-400/50 transition-shadow' onClick={onBack}>← Back to projects</button>
+      </nav>
+      <article className='max-w-5xl mx-auto'>
+        <header className='mb-8'>
           <h1 className='text-4xl sm:text-5xl font-extrabold tracking-tight'>{p.title}</h1>
           <div className='flex flex-wrap items-center gap-4 mt-2'>
             {p.jobTitle && (
@@ -532,7 +535,7 @@ function ProjectDetail({ projectKey, onBack }) {
           {p.description && (
             <p className='mt-4 text-muted max-w-3xl'>{p.description}</p>
           )}
-        </div>
+        </header>
 
         <div className='mt-8 mb-8'>
           <MediaCarousel 
@@ -637,8 +640,8 @@ function ProjectDetail({ projectKey, onBack }) {
             )}
           </div>
         )}
-      </div>
-    </div>
+      </article>
+    </main>
   );
 }
 
@@ -666,7 +669,7 @@ export default function App(){
     return () => window.removeEventListener('hashchange', onHash);
   }, []);
 
-  // Update meta tags based on current route
+  // Update meta tags and structured data based on current route
   useEffect(() => {
     if (route.name === 'project') {
       const project = projects.find(p => p.key === route.key);
@@ -685,16 +688,41 @@ export default function App(){
         
         const projectDescription = project.description || `${project.title} - ${project.jobTitle || 'Project'}`;
         
+        // Generate keywords from project stack and description
+        const projectKeywords = [
+          ...(project.stack || []),
+          project.engine || '',
+          'Unity',
+          'Game Development',
+          'Mobile Games'
+        ].filter(Boolean).join(', ');
+        
         updateMetaTags({
           title: `${project.title} — ${project.jobTitle || 'Project'} | Steven Henry`,
           description: projectDescription,
           image: projectImage,
           url: projectUrl,
           type: 'article',
+          keywords: projectKeywords,
+          publishedTime: project.timeline ? `${project.timeline.split('-')[0].trim()}-01-01` : undefined,
+          author: 'Steven Nassef Henry',
         });
+
+        // Inject structured data for project page
+        injectStructuredData([
+          generateProjectSchema(project),
+          generateBreadcrumbSchema(project)
+        ]);
       }
     } else {
       resetMetaTags();
+      
+      // Inject structured data for home page
+      injectStructuredData([
+        generatePersonSchema(),
+        generatePortfolioSchema(projects),
+        generateBreadcrumbSchema()
+      ]);
     }
   }, [route]);
 

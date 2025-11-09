@@ -43,8 +43,11 @@ function setTitle(title) {
  * @param {string} options.image - Image URL for social sharing
  * @param {string} options.url - Page URL (relative path will be converted to full URL)
  * @param {string} options.type - Open Graph type (default: 'website')
+ * @param {string} options.keywords - Keywords for SEO (optional)
+ * @param {string} options.publishedTime - Published time for articles (optional)
+ * @param {string} options.author - Author name (optional)
  */
-export function updateMetaTags({ title, description, image, url, type = 'website' }) {
+export function updateMetaTags({ title, description, image, url, type = 'website', keywords, publishedTime, author }) {
   const fullUrl = url ? (url.startsWith('http') ? url : `${SITE_URL}${url}`) : SITE_URL;
   // Ensure image is always an absolute URL
   let fullImage = image ? (image.startsWith('http') ? image : `${SITE_URL}${image}`) : DEFAULT_IMAGE;
@@ -65,10 +68,19 @@ export function updateMetaTags({ title, description, image, url, type = 'website
     setMetaTag('twitter:description', description);
   }
   
-  // Update URL
+  // Update URL and canonical
   if (url) {
     setMetaTag('og:url', fullUrl);
     setMetaTag('twitter:url', fullUrl);
+    
+    // Update canonical link
+    let canonicalLink = document.querySelector('link[rel="canonical"]');
+    if (!canonicalLink) {
+      canonicalLink = document.createElement('link');
+      canonicalLink.setAttribute('rel', 'canonical');
+      document.head.appendChild(canonicalLink);
+    }
+    canonicalLink.setAttribute('href', fullUrl);
   }
   
   // Update image with all required properties for WhatsApp
@@ -98,6 +110,23 @@ export function updateMetaTags({ title, description, image, url, type = 'website
   
   // WhatsApp-specific: Ensure locale is set
   setMetaTag('og:locale', 'en_US');
+  
+  // Update keywords if provided
+  if (keywords) {
+    setMetaTag('keywords', keywords, 'name');
+  }
+  
+  // Article-specific meta tags
+  if (type === 'article') {
+    if (publishedTime) {
+      setMetaTag('article:published_time', publishedTime);
+    }
+    if (author) {
+      setMetaTag('article:author', author);
+    } else {
+      setMetaTag('article:author', 'Steven Nassef Henry');
+    }
+  }
 }
 
 /**
