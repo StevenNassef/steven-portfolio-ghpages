@@ -7,7 +7,7 @@ Environment variables are loaded from:
 ## Available Environment Variables
 
 ### `VITE_MEDIA_BASE_URL`
-Base URL for media assets (images, videos, etc.)
+Base URL for media assets (images, low-quality videos, etc.)
 
 **Required**: Yes (defaults to `/` if not set)
 
@@ -15,6 +15,16 @@ Base URL for media assets (images, videos, etc.)
 - Local development: `/`
 - CDN: `https://cdn.jsdelivr.net/gh/StevenNassef/steven-portfolio-ghpages@main/public/`
 - GitHub Pages: `https://stevennassef.github.io/steven-portfolio-ghpages/`
+
+### `VITE_HIGH_QUALITY_VIDEO_BASE_URL`
+Base URL for high-quality videos. If not set, falls back to `VITE_MEDIA_BASE_URL`.
+
+**Required**: No (defaults to `VITE_MEDIA_BASE_URL` if not set)
+
+**Examples**:
+- Separate CDN for videos: `https://video-cdn.example.com/`
+- Different GitHub Pages branch: `https://stevennassef.github.io/steven-portfolio-ghpages-videos/`
+- Local development: `/` (or omit to use `VITE_MEDIA_BASE_URL`)
 
 ### `VITE_CV_URL`
 URL to your CV/Resume PDF file.
@@ -31,6 +41,7 @@ Create a `.env.local` file in the project root (this file is ignored by git):
 
 ```bash
 VITE_MEDIA_BASE_URL=/
+VITE_HIGH_QUALITY_VIDEO_BASE_URL=/
 VITE_CV_URL=https://flowcv.com/resume/u95uup2l43
 ```
 
@@ -45,6 +56,7 @@ Set environment variables in GitHub:
 3. Click `New repository variable`
 4. Add the following variables:
    - `VITE_MEDIA_BASE_URL`: Your media base URL (e.g., CDN or GitHub Pages URL)
+   - `VITE_HIGH_QUALITY_VIDEO_BASE_URL`: Your high-quality video base URL (optional, defaults to `VITE_MEDIA_BASE_URL`)
    - `VITE_CV_URL`: Your CV/Resume URL (optional)
 
 **Alternative**: You can also set them in the `github-pages` environment:
@@ -76,3 +88,5 @@ Set environment variables in GitHub:
 - `.env.local` is ignored by git (safe for local overrides)
 - If `VITE_CV_URL` is not set, the download CV button will be hidden
 - If `VITE_MEDIA_BASE_URL` is not set, it defaults to `/` (local files)
+- If `VITE_HIGH_QUALITY_VIDEO_BASE_URL` is not set, it defaults to `VITE_MEDIA_BASE_URL`
+- High-quality videos use `VITE_HIGH_QUALITY_VIDEO_BASE_URL`, while low-quality videos and images use `VITE_MEDIA_BASE_URL`

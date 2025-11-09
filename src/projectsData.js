@@ -1,4 +1,4 @@
-import { getMediaUrl } from './config.js';
+import { getMediaUrl, getHighQualityVideoUrl } from './config.js';
 
 /**
  * Dynamically generates media paths based on naming convention:
@@ -25,14 +25,14 @@ function generateMediaPaths(key, options = {}) {
     // Try to add video (both lowercase and uppercase extensions)
     const videoExtensions = ['.mp4'];
     for (const ext of videoExtensions) {
-        const videoPath = getMediaUrl(`${projectPath}/${key}${ext}`);
+        const videoPath = getHighQualityVideoUrl(`${projectPath}/${key}${ext}`);
         const videoPathLow = getMediaUrl(`${projectPath}/${key}_low${ext}`);
         // Get poster from first numbered image
         const poster = getMediaUrl(`${projectPath}/${key}_1.jpeg`);
         gallery.push({
             type: "video",
-            src: videoPath, // High quality (original)
-            srcLow: videoPathLow, // Low quality (for home screen)
+            src: videoPath, // High quality (original) - uses HIGH_QUALITY_VIDEO_BASE_URL
+            srcLow: videoPathLow, // Low quality (for home screen) - uses MEDIA_BASE_URL
             poster: poster
         });
     }

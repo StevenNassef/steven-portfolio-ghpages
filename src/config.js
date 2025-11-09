@@ -8,6 +8,9 @@
 // Media assets base URL - must be set in environment variables
 export const MEDIA_BASE_URL = import.meta.env.VITE_MEDIA_BASE_URL || "/";
 
+// High-quality video base URL - optional, falls back to MEDIA_BASE_URL if not set
+export const HIGH_QUALITY_VIDEO_BASE_URL = import.meta.env.VITE_HIGH_QUALITY_VIDEO_BASE_URL || MEDIA_BASE_URL;
+
 // CV/Resume URL - optional, button will be hidden if not set
 export function getCvUrl() {
   return import.meta.env.VITE_CV_URL || "";
@@ -25,6 +28,20 @@ export function getMediaUrl(path) {
   return MEDIA_BASE_URL.endsWith("/") 
     ? `${MEDIA_BASE_URL}${cleanPath}`
     : `${MEDIA_BASE_URL}/${cleanPath}`;
+}
+
+// Helper function to build high-quality video URLs
+export function getHighQualityVideoUrl(path) {
+  if (!path) return "";
+  // If path already starts with http:// or https://, return as-is
+  if (path.startsWith("http://") || path.startsWith("https://")) {
+    return path;
+  }
+  // Remove leading slash if present, then add base URL
+  const cleanPath = path.startsWith("/") ? path.slice(1) : path;
+  return HIGH_QUALITY_VIDEO_BASE_URL.endsWith("/") 
+    ? `${HIGH_QUALITY_VIDEO_BASE_URL}${cleanPath}`
+    : `${HIGH_QUALITY_VIDEO_BASE_URL}/${cleanPath}`;
 }
 
 // Firebase configuration - loaded from a single JSON string environment variable
