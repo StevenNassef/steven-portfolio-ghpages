@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { Github, Linkedin, Mail, Download, Gamepad2, Wrench, Cpu, Rocket, Clock, Users, Smartphone, ExternalLink } from 'lucide-react'
-import { projects, experiences, companyConfig } from './projectsData.js'
+import { Mail, Github, Linkedin, Download, Gamepad2, Wrench, Cpu, Rocket, Clock, Users } from 'lucide-react'
+import { projects, experiences, companyConfig, contactLinks } from './projectsData.js'
 import MediaCarousel from "./components/MediaCarousel.jsx";
 import { getMediaUrl, getCvUrl } from './config.js';
 import { updateMetaTags, resetMetaTags } from './utils/metaTags.js';
@@ -355,7 +355,7 @@ function Home({ onOpenProject }) {
             <div className='flex flex-wrap items-center gap-3 pt-6 border-t border-border'>
               <a 
                 className='btn btn-primary' 
-                href='mailto:contact@stevennassef.com'
+                href={`mailto:${contactLinks.email}${contactLinks.ccEmail ? `?cc=${encodeURIComponent(contactLinks.ccEmail)}` : ''}`}
                 aria-label='Send email to Steven Nassef Henry'
               >
                 <Mail className='h-4 w-4'/> 
@@ -363,7 +363,7 @@ function Home({ onOpenProject }) {
               </a>
               <a 
                 className='btn btn-outline' 
-                href='https://github.com/StevenNassef' 
+                href={contactLinks.github} 
                 target='_blank' 
                 rel='noreferrer'
                 aria-label='View Steven Nassef Henry on GitHub'
@@ -373,7 +373,7 @@ function Home({ onOpenProject }) {
               </a>
               <a 
                 className='btn btn-outline' 
-                href='https://www.linkedin.com/in/steven-nassef/' 
+                href={contactLinks.linkedin} 
                 target='_blank' 
                 rel='noreferrer'
                 aria-label='Connect with Steven Nassef Henry on LinkedIn'
@@ -582,11 +582,11 @@ function Home({ onOpenProject }) {
 
       <Section id='contact' title="Let's work together" subtitle='Open to Senior/Lead Unity roles — remote or on‑site.'>
         <div className='flex flex-wrap gap-3'>
-          <a className='btn btn-primary' href='mailto:stevennassef97@gmail.com'><Mail className='h-4 w-4'/> Email me</a>
-          <a className='btn btn-outline' href='https://www.linkedin.com/in/steven-nassef-henry-192366227/' target='_blank' rel='noreferrer'><Linkedin className='h-4 w-4'/> Connect on LinkedIn</a>
-          <a className='btn btn-outline' href='https://github.com/StevenNassef' target='_blank' rel='noreferrer'><Github className='h-4 w-4'/> View GitHub</a>
+          <a className='btn btn-primary' href={`mailto:${contactLinks.email}${contactLinks.ccEmail ? `?cc=${encodeURIComponent(contactLinks.ccEmail)}` : ''}`}><Mail className='h-4 w-4'/> Contact Me</a>
+          <a className='btn btn-outline' href={contactLinks.linkedin} target='_blank' rel='noreferrer'><Linkedin className='h-4 w-4'/> LinkedIn</a>
+          <a className='btn btn-outline' href={contactLinks.github} target='_blank' rel='noreferrer'><Github className='h-4 w-4'/> GitHub</a>
           {getCvUrl() && (
-            <a className='btn btn-outline' href={getCvUrl()} target='_blank' rel='noreferrer' download><Download className='h-4 w-4'/> Download Resume (PDF)</a>
+            <a className='btn btn-outline' href={getCvUrl()} target='_blank' rel='noreferrer' download><Download className='h-4 w-4'/> Download Resume</a>
           )}
         </div>
       </Section>

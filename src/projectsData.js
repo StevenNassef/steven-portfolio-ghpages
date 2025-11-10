@@ -496,6 +496,17 @@ export const experiences = [
 ];
 
 /**
+ * Contact links for social media and email
+ * Centralized contact information used across the portfolio
+ */
+export const contactLinks = {
+    email: 'contact@stevennassef.com',
+    ccEmail: 'stevennassef97@gmail.com',
+    github: 'https://github.com/StevenNassef',
+    linkedin: 'https://www.linkedin.com/in/steven-nassef/',
+};
+
+/**
  * Company configuration for logos and icons
  * Each company includes local icon path, LinkedIn URL, icon URL, and Clearbit logo
  */
