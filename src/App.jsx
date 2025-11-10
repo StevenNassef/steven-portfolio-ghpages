@@ -6,7 +6,7 @@ import { getMediaUrl, getCvUrl } from './config.js';
 import { updateMetaTags, resetMetaTags } from './utils/metaTags.js';
 import { injectStructuredData, generatePersonSchema, generatePortfolioSchema, generateProjectSchema, generateBreadcrumbSchema } from './utils/structuredData.js';
 
-const Badge = ({children}) => <span className='badge'>{children}</span>
+const Badge = ({children, className = ''}) => <span className={`badge ${className}`}>{children}</span>
 const Card = ({children, className = '', ...props}) => <div className={`card ${className}`} {...props}>{children}</div>
 const CardHeader = ({children}) => <div className='card-header'>{children}</div>
 const CardTitle = ({children, className = ''}) => <div className={`card-title ${className}`}>{children}</div>
@@ -264,15 +264,21 @@ const PlatformIcon = ({ platform, url, size = 'md' }) => {
   );
 };
 
-const Section = ({id, title, subtitle, children}) => (
-  <section id={id} className='section'>
-    <div className='mb-6'>
-      <h2 className='text-2xl sm:text-3xl font-bold tracking-tight'>{title}</h2>
-      {subtitle && <p className='mt-2 text-muted max-w-3xl'>{subtitle}</p>}
-    </div>
-    {children}
-  </section>
-)
+const Section = ({id, title, subtitle, children, className = ''}) => {
+  // Extract padding-top from className if provided, otherwise use default
+  const hasCustomPadding = className.includes('pt-') || className.includes('!pt-');
+  const defaultPadding = hasCustomPadding ? '' : 'py-12';
+  
+  return (
+    <section id={id} className={`container ${defaultPadding} ${className}`}>
+      <div className='mb-6'>
+        <h2 className='text-2xl sm:text-3xl font-bold tracking-tight'>{title}</h2>
+        {subtitle && <p className='mt-2 text-muted max-w-3xl'>{subtitle}</p>}
+      </div>
+      {children}
+    </section>
+  );
+}
 
 function parseRoute() {
   const hash = window.location.hash || '';
@@ -285,36 +291,115 @@ function Home({ onOpenProject }) {
   const year = new Date().getFullYear()
   return (
     <main>
-      <header className='container py-16 flex flex-col gap-6'>
-        <div className='flex flex-col md:flex-row md:items-center md:justify-between gap-6'>
-          <div>
-            <div className='flex items-center gap-4 mb-3'>
+      <header className='container pt-16 sm:pt-20 lg:pt-24 pb-8 sm:pb-12 flex flex-col'>
+        {/* Main Profile Section */}
+        <div className='flex flex-col'>
+          {/* Profile Image and Name/Title Row */}
+          <div className='flex flex-col sm:flex-row items-start gap-5 sm:gap-6 mb-8'>
+            {/* Profile Image */}
+            <div className='flex-shrink-0'>
               <img 
                 src={getMediaUrl("/profile/profile.jpg")} 
                 alt="Steven Nassef Henry - Senior Unity Engineer and Game Developer" 
-                className='w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-border'
+                className='w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 rounded-2xl object-cover border-2 border-border shadow-lg'
               />
-              <h1 className='text-4xl sm:text-5xl font-extrabold tracking-tight'>Steven Nassef Henry</h1>
             </div>
-            <p className='mt-3 text-lg sm:text-xl text-muted max-w-2xl'>
-              Senior Unity Engineer — gameplay systems, live‑ops, and high‑performance mobile experiences.
-            </p>
-            <div className='mt-4 flex flex-wrap items-center gap-2'>
-              {['Unity','C#','DOTS','Netcode for Entities','Firebase','Adjust','AppsFlyer','PlayFab','Jenkins CI'].map((t,i)=>(<Badge key={i}>{t}</Badge>))}
+            
+            {/* Name and Title - beside photo on larger screens */}
+            <div className='flex-1 space-y-1.5 sm:pt-1'>
+              <h1 className='text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight'>
+                Steven Nassef Henry
+              </h1>
+              <p className='text-xl sm:text-2xl font-semibold text-foreground'>
+                Senior Unity Engineer
+              </p>
             </div>
           </div>
-          <div className='flex flex-wrap gap-3'>
-            <a className='btn btn-primary' href='mailto:contact@stevennassef.com'><Mail className='h-4 w-4'/> Contact</a>
-            <a className='btn btn-outline' href='https://github.com/StevenNassef' target='_blank' rel='noreferrer'><Github className='h-4 w-4'/> GitHub</a>
-            <a className='btn btn-outline' href='https://www.linkedin.com/in/steven-nassef/' target='_blank' rel='noreferrer'><Linkedin className='h-4 w-4'/> LinkedIn</a>
-            {getCvUrl() && (
-              <a className='btn btn-outline' href={getCvUrl()} target='_blank' rel='noreferrer' download><Download className='h-4 w-4'/> Resume</a>
-            )}
+          
+          {/* Description and Content - full width */}
+          <div className='flex flex-col space-y-7 w-full'>
+            {/* Description */}
+            <p className='text-base sm:text-lg text-muted leading-relaxed max-w-none'>
+              Specializing in systems architecture and design, applying SOLID principles and proven design patterns to build 
+              scalable, maintainable game systems. Delivering high-performance mobile and PC game experiences with robust 
+              live-ops infrastructure, seamless SDK integrations, and optimized gameplay architectures that support millions of players.
+            </p>
+
+            {/* Professional Highlights */}
+            <div className='flex flex-wrap items-center gap-x-4 gap-y-2'>
+              <div className='flex items-center gap-2 text-sm text-muted'>
+                <Clock className='h-4 w-4 flex-shrink-0' />
+                <span className='font-medium'>5+ Years Experience</span>
+              </div>
+              <span className='text-muted hidden sm:inline'>•</span>
+              <div className='flex items-center gap-2 text-sm text-muted'>
+                <Rocket className='h-4 w-4 flex-shrink-0' />
+                <span className='font-medium'>20M+ Downloads</span>
+              </div>
+              <span className='text-muted hidden sm:inline'>•</span>
+              <div className='flex items-center gap-2 text-sm text-muted'>
+                <Gamepad2 className='h-4 w-4 flex-shrink-0' />
+                <span className='font-medium'>Mobile & PC Games Specialist</span>
+              </div>
+            </div>
+
+            {/* Core Technologies - Quick Recap */}
+            <div className='space-y-3'>
+              <h3 className='text-sm font-semibold text-muted uppercase tracking-wider'>Key Technologies</h3>
+              <div className='flex flex-wrap items-center gap-2.5'>
+                {['Unity', 'C#', 'Unity Game Services', 'Netcode for GameObjects', 'Firebase', 'PlayFab', 'Analytics', 'Live-Ops'].map((t,i)=>(<Badge key={i} className='text-xs px-3.5 py-1.5'>{t}</Badge>))}
+              </div>
+            </div>
+
+            {/* Contact Actions */}
+            <div className='flex flex-wrap items-center gap-3 pt-6 border-t border-border'>
+              <a 
+                className='btn btn-primary' 
+                href='mailto:contact@stevennassef.com'
+                aria-label='Send email to Steven Nassef Henry'
+              >
+                <Mail className='h-4 w-4'/> 
+                <span>Contact Me</span>
+              </a>
+              <a 
+                className='btn btn-outline' 
+                href='https://github.com/StevenNassef' 
+                target='_blank' 
+                rel='noreferrer'
+                aria-label='View Steven Nassef Henry on GitHub'
+              >
+                <Github className='h-4 w-4'/> 
+                <span>GitHub</span>
+              </a>
+              <a 
+                className='btn btn-outline' 
+                href='https://www.linkedin.com/in/steven-nassef/' 
+                target='_blank' 
+                rel='noreferrer'
+                aria-label='Connect with Steven Nassef Henry on LinkedIn'
+              >
+                <Linkedin className='h-4 w-4'/> 
+                <span>LinkedIn</span>
+              </a>
+              {getCvUrl() && (
+                <a 
+                  className='btn btn-outline' 
+                  href={getCvUrl()} 
+                  target='_blank' 
+                  rel='noreferrer' 
+                  download
+                  aria-label='Download Steven Nassef Henry resume'
+                >
+                  <Download className='h-4 w-4'/> 
+                  <span>Download Resume</span>
+                </a>
+              )}
+            </div>
           </div>
         </div>
       </header>
 
-      <Section id='experience' title='Experience Snapshot' subtitle='Focused on shipping robust features, optimizing performance, and integrating growth/analytics SDKs at scale.'>
+      <Section id='experience' title='Experience Snapshot' subtitle='Focused on shipping robust features, optimizing performance, and integrating growth/analytics SDKs at scale.' className='pt-8 sm:pt-10 pb-12'>
         <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-4'>
           {experiences.map((exp, index) => (
             <Card key={index}>
@@ -466,18 +551,30 @@ function Home({ onOpenProject }) {
         </div>
       </Section>
 
-      <Section id='skills' title='Core Skills'>
+      <Section id='skills' title='Core Skills & Technologies' subtitle='Comprehensive expertise in game development, systems architecture, and production tools.'>
         <div className='grid md:grid-cols-2 gap-4'>
           <Card>
-            <CardHeader><CardTitle>Engineering</CardTitle></CardHeader>
+            <CardHeader><CardTitle>Engineering & Architecture</CardTitle></CardHeader>
             <CardContent className='flex flex-wrap gap-2 text-sm'>
-              {['Gameplay Architecture','ECS/DOTS','Netcode for Entities','UI/UX Implementation','Addressables','Profiling & Optimization','Editor Tooling','Unit Testing / TDD'].map((s,i)=>(<Badge key={i}>{s}</Badge>))}
+              {['Systems Architecture','SOLID Principles','Design Patterns','Gameplay Architecture','UI/UX Implementation','Profiling & Optimization','Editor Tooling','Unit Testing / TDD'].map((s,i)=>(<Badge key={i}>{s}</Badge>))}
             </CardContent>
           </Card>
           <Card>
-            <CardHeader><CardTitle>Production</CardTitle></CardHeader>
+            <CardHeader><CardTitle>Core Technologies</CardTitle></CardHeader>
             <CardContent className='flex flex-wrap gap-2 text-sm'>
-              {['Feature Flags','Live‑Ops','Analytics & Attribution','SDK Integrations','Crash/ANR Triage','CI/CD (Jenkins)','Remote Config','A/B Testing'].map((s,i)=>(<Badge key={i}>{s}</Badge>))}
+              {['Unity','C#','Unity Game Services','Netcode for GameObjects','Addressables','Firebase','PlayFab','Jenkins CI'].map((s,i)=>(<Badge key={i}>{s}</Badge>))}
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader><CardTitle>Production & Live-Ops</CardTitle></CardHeader>
+            <CardContent className='flex flex-wrap gap-2 text-sm'>
+              {['Feature Flags','Live-Ops','Remote Config','A/B Testing','SDK Integrations','Crash/ANR Triage','CI/CD'].map((s,i)=>(<Badge key={i}>{s}</Badge>))}
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader><CardTitle>Analytics & Attribution</CardTitle></CardHeader>
+            <CardContent className='flex flex-wrap gap-2 text-sm'>
+              {['Firebase Analytics','AppsFlyer','Singular','Kinoa','Data Analysis','Performance Monitoring', 'Unity Game Services'].map((s,i)=>(<Badge key={i}>{s}</Badge>))}
             </CardContent>
           </Card>
         </div>
@@ -775,7 +872,8 @@ export default function App(){
           project.engine || '',
           'Unity',
           'Game Development',
-          'Mobile Games'
+          'Mobile Games',
+          'PC Games'
         ].filter(Boolean).join(', ');
         
         updateMetaTags({

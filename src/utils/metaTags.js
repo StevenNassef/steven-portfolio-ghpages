@@ -5,7 +5,7 @@
 
 const SITE_URL = 'https://www.stevennassef.com';
 const SITE_NAME = 'Steven Henry — Portfolio';
-const DEFAULT_DESCRIPTION = 'Senior Unity Engineer — gameplay systems, live‑ops, and high‑performance mobile experiences.';
+const DEFAULT_DESCRIPTION = 'Senior Unity Engineer specializing in systems architecture and design, applying SOLID principles and design patterns to build scalable, maintainable game systems. Expert in high-performance mobile and PC game development, live-ops infrastructure, and seamless SDK integrations.';
 const DEFAULT_IMAGE = `${SITE_URL}/profile/profile.jpg`;
 
 /**
