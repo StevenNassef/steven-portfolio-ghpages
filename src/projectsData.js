@@ -504,6 +504,7 @@ export const contactLinks = {
     ccEmail: 'stevennassef97@gmail.com',
     github: 'https://github.com/StevenNassef',
     linkedin: 'https://www.linkedin.com/in/steven-nassef/',
+    leetcode: 'https://leetcode.com/u/StevenHenry/',
 };
 
 /**

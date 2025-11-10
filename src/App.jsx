@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { Mail, Github, Linkedin, Download, Gamepad2, Wrench, Cpu, Rocket, Clock, Users } from 'lucide-react'
+import { Mail, Github, Linkedin, Download, Gamepad2, Wrench, Cpu, Rocket, Clock, Users, Code2 } from 'lucide-react'
 import { projects, experiences, companyConfig, contactLinks } from './projectsData.js'
 import MediaCarousel from "./components/MediaCarousel.jsx";
 import { getMediaUrl, getCvUrl } from './config.js';
@@ -381,6 +381,16 @@ function Home({ onOpenProject }) {
                 <Linkedin className='h-4 w-4'/> 
                 <span>LinkedIn</span>
               </a>
+              <a 
+                className='btn btn-outline' 
+                href={contactLinks.leetcode} 
+                target='_blank' 
+                rel='noreferrer'
+                aria-label='View Steven Nassef Henry on LeetCode'
+              >
+                <Code2 className='h-4 w-4'/> 
+                <span>LeetCode</span>
+              </a>
               {getCvUrl() && (
                 <a 
                   className='btn btn-outline' 
@@ -585,6 +595,7 @@ function Home({ onOpenProject }) {
           <a className='btn btn-primary' href={`mailto:${contactLinks.email}${contactLinks.ccEmail ? `?cc=${encodeURIComponent(contactLinks.ccEmail)}` : ''}`}><Mail className='h-4 w-4'/> Contact Me</a>
           <a className='btn btn-outline' href={contactLinks.linkedin} target='_blank' rel='noreferrer'><Linkedin className='h-4 w-4'/> LinkedIn</a>
           <a className='btn btn-outline' href={contactLinks.github} target='_blank' rel='noreferrer'><Github className='h-4 w-4'/> GitHub</a>
+          <a className='btn btn-outline' href={contactLinks.leetcode} target='_blank' rel='noreferrer'><Code2 className='h-4 w-4'/> LeetCode</a>
           {getCvUrl() && (
             <a className='btn btn-outline' href={getCvUrl()} target='_blank' rel='noreferrer' download><Download className='h-4 w-4'/> Download Resume</a>
           )}

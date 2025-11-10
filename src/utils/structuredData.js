@@ -21,7 +21,8 @@ export function generatePersonSchema() {
     "sameAs": [
       "https://github.com/StevenNassef",
       "https://www.linkedin.com/in/steven-nassef-henry-192366227/",
-      "https://www.linkedin.com/in/steven-nassef/"
+      "https://www.linkedin.com/in/steven-nassef/",
+      "https://leetcode.com/u/StevenHenry/"
     ],
     "email": "contact@stevennassef.com",
     "knowsAbout": [
